@@ -2,9 +2,12 @@ package com.lth.identify_service.exception;
 
 import com.lth.identify_service.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import lombok.extern.slf4j.Slf4j;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -23,18 +26,26 @@ public class GlobalExceptionHandler {
         } catch (IllegalArgumentException exception) {
         }
         ApiResponse response = new ApiResponse(errorCode.getCode(), errorCode.getMessage(), null);
-        return ResponseEntity.badRequest().body(response);
+        return ResponseEntity.status(errorCode.getStatusCode()).body(response);
     }
 
     @ExceptionHandler(value = AppException.class)
     ResponseEntity<ApiResponse> handleAppException(AppException e) {
         ApiResponse response = new ApiResponse(e.getErrorCode().getCode(), e.getErrorCode().getMessage(), null);
-        return ResponseEntity.badRequest().body(response);
+        return ResponseEntity.status(e.getErrorCode().getStatusCode()).body(response);
     }
 
     @ExceptionHandler(value = Exception.class)
     ResponseEntity<ApiResponse> handleException(Exception e) {
-        ApiResponse response = new ApiResponse(500, e.getMessage(), null);
-        return ResponseEntity.internalServerError().body(response);
+        ErrorCode errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
+        ApiResponse response = new ApiResponse(errorCode.getCode(), errorCode.getMessage(), null);
+        return ResponseEntity.status(errorCode.getStatusCode()).body(response);
+    }
+
+    @ExceptionHandler(value = AccessDeniedException.class)
+    ResponseEntity<ApiResponse> handleAccessDeniedException(AccessDeniedException e) {
+        ErrorCode errorCode = ErrorCode.UNAUTHORIZED;
+        ApiResponse response = new ApiResponse(errorCode.getCode(), errorCode.getMessage(), null);
+        return ResponseEntity.status(errorCode.getStatusCode()).body(response);
     }
 }
