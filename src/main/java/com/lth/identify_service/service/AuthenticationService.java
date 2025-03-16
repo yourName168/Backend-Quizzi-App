@@ -72,7 +72,7 @@ public class AuthenticationService {
         JWSHeader jwsHeader = new JWSHeader(JWSAlgorithm.HS512);
 
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
-                .subject(user.getUsername())
+                .subject(user.getId())
                 .issuer("lth")
                 .issueTime(new Date())
                 .expirationTime(new Date(System.currentTimeMillis() + 3600 * 1000))

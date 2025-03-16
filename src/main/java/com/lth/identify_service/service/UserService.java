@@ -50,7 +50,6 @@ public class UserService {
                 .toList();
     }
 
-    @PostAuthorize("returnObject.username == authentication.principal.name")
     public UserResponse getUser(String userId) {
         return userMapper.toUserResponse(userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND)));
@@ -64,6 +63,7 @@ public class UserService {
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public String deleteUser(String userId) {
         try {
             userRepository.deleteById(userId);
