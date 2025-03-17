@@ -1,11 +1,12 @@
 package com.lth.identify_service.dto.response;
 
-import jakarta.persistence.Entity;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 import java.util.Set;
+
+import com.lth.identify_service.entity.Role;
 
 @Data
 @NoArgsConstructor
@@ -18,5 +19,5 @@ public class UserResponse {
     String firstName;
     String lastName;
     LocalDate dob;
-    Set<String> roles;
+    Set<Role> roles;
 }
