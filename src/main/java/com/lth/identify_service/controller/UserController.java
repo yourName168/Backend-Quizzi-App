@@ -25,35 +25,35 @@ public class UserController {
 
     @PostMapping
     ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreationRequest request) {
-        ApiResponse response = new ApiResponse(201, "User created successfully", userService.createUser(request));
+        ApiResponse<UserResponse> response = new ApiResponse<UserResponse>(201, "User created successfully", userService.createUser(request));
 
         return response;
     }
 
     @GetMapping
-    ApiResponse<List> getUsers() {
+    ApiResponse<List<UserResponse>> getUsers() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         log.info("User: {}", authentication.getPrincipal());
         authentication.getAuthorities().forEach(authority -> log.info("Authority: {}", authority.getAuthority()));
-        ApiResponse response = new ApiResponse(200, "Users retrieved successfully", userService.getUsers());
+        ApiResponse<List<UserResponse>> response = new ApiResponse<List<UserResponse>>(200, "Users retrieved successfully", userService.getUsers());
         return response;
     }
 
     @GetMapping("/{userId}")
     ApiResponse<UserResponse> getUser(@PathVariable("userId") String userId) {
-        ApiResponse response = new ApiResponse(200, "User retrieved successfully", userService.getUser(userId));
+        ApiResponse<UserResponse> response = new ApiResponse<UserResponse>(200, "User retrieved successfully", userService.getUser(userId));
         return response;
     }
 
     @PutMapping("/{userId}")
     ApiResponse<UserResponse> updateUser(@PathVariable("userId") String userId, @RequestBody UserUpdateRequest request) {
-        ApiResponse response = new ApiResponse(200, "User updated successfully", userService.updateUser(userId, request));
+        ApiResponse<UserResponse> response = new ApiResponse<UserResponse>(200, "User updated successfully", userService.updateUser(userId, request));
         return response;
     }
 
     @DeleteMapping("/{userId}")
     ApiResponse<String> deleteUser(@PathVariable("userId") String userId) {
-        ApiResponse response = new ApiResponse(200, "User deleted successfully", userService.deleteUser(userId));
+        ApiResponse<String> response = new ApiResponse<String>(200, "User deleted successfully", userService.deleteUser(userId));
         return response;
     }
 
@@ -61,7 +61,7 @@ public class UserController {
     ApiResponse<UserResponse> getMyInfor() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         String userId = authentication.getName();
-        ApiResponse response = new ApiResponse(200, "User retrieved successfully", userService.getUser(userId));
+        ApiResponse<UserResponse> response = new ApiResponse<UserResponse>(200, "User retrieved successfully", userService.getUser(userId));
         return response;
     }
 

@@ -3,8 +3,8 @@ package com.lth.identify_service.service;
 import com.lth.identify_service.dto.request.UserCreationRequest;
 import com.lth.identify_service.dto.request.UserUpdateRequest;
 import com.lth.identify_service.dto.response.UserResponse;
+import com.lth.identify_service.entity.Role;
 import com.lth.identify_service.entity.User;
-import com.lth.identify_service.enums.Role;
 import com.lth.identify_service.exception.AppException;
 import com.lth.identify_service.exception.ErrorCode;
 import com.lth.identify_service.mapper.UserMapper;
@@ -12,9 +12,7 @@ import com.lth.identify_service.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -37,8 +35,8 @@ public class UserService {
 
         User user = userMapper.toUser(request);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        HashSet<String> roles = new HashSet<>();
-        roles.add(Role.USER.name());
+        HashSet<Role> roles = new HashSet<>();
+        roles.add(Role.builder().name("USER").build());
         user.setRoles(roles);
         return userMapper.toUserResponse(userRepository.save(user));
     }

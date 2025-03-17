@@ -26,14 +26,14 @@ public class AuthenticationController {
     @PostMapping("/token")
     ApiResponse<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
         AuthenticationResponse authResponse = authenticationService.authenticate(request);
-        ApiResponse response = new ApiResponse(200, null, authResponse);
+        ApiResponse<AuthenticationResponse> response = new ApiResponse<AuthenticationResponse>(200, null, authResponse);
         return response;
     }
 
     @PostMapping("/introspect")
     ApiResponse<IntrospectResponse> introspect(@RequestBody IntrospectRequest request) throws ParseException, JOSEException {
         IntrospectResponse introspect = authenticationService.introspect(request);
-        ApiResponse response = new ApiResponse(200, null, introspect);
+        ApiResponse<IntrospectResponse> response = new ApiResponse<IntrospectResponse>(200, null, introspect);
         return response;
     }
 }
