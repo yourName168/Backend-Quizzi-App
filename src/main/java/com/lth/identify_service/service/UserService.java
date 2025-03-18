@@ -28,17 +28,17 @@ public class UserService {
     PasswordEncoder passwordEncoder;
 
     public UserResponse createUser(UserCreationRequest request) {
-        String userName = request.getUsername();
-        if (userRepository.existsByUsername(userName)) {
+        try{
+
+            User user = userMapper.toUser(request);
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            HashSet<Role> roles = new HashSet<>();
+            roles.add(Role.builder().name("USER").build());
+            user.setRoles(roles);
+            return userMapper.toUserResponse(userRepository.save(user));
+        } catch (Exception e) {
             throw new AppException(ErrorCode.USER_EXISTS);
         }
-
-        User user = userMapper.toUser(request);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        HashSet<Role> roles = new HashSet<>();
-        roles.add(Role.builder().name("USER").build());
-        user.setRoles(roles);
-        return userMapper.toUserResponse(userRepository.save(user));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
