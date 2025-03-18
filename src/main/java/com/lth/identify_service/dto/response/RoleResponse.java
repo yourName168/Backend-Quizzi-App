@@ -1,5 +1,9 @@
 package com.lth.identify_service.dto.response;
 
+import java.util.Set;
+
+import com.lth.identify_service.entity.Permission;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -11,4 +15,6 @@ import lombok.experimental.FieldDefaults;
 public class RoleResponse {
     String name;
     String description;
+
+    Set<Permission> permissions;
 }

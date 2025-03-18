@@ -25,6 +25,10 @@ public class PermissionService {
 
     public PermissionResponse create(PermissionRequest permissionRequest) {
         Permission permission = permissionMapper.toPermission(permissionRequest);
+        boolean exists = permissionRepository.existsById(permission.getName());
+        if (exists) {
+            throw new RuntimeException("Permission already exists");
+        }
         permission = permissionRepository.save(permission);
         return permissionMapper.toPermissionResponse(permission);
     }
