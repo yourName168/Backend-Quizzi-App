@@ -46,4 +46,7 @@ public class GlobalExceptionHandler {
         ApiResponse response = new ApiResponse(errorCode.getCode(), errorCode.getMessage(), null);
         return ResponseEntity.status(errorCode.getStatusCode()).body(response);
     }
+
+    @ExceptionHandler(value = DataIntegrityViolationException.class)
+    
 }
