@@ -1,0 +1,46 @@
+name: Build & Deploy Docker to EC2
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Log in to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build, tag, and push image to ECR
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPO: ${{ secrets.ECR_REPO_NAME }}
+        IMAGE_TAG: latest
+      run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
+
+    - name: Set up SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+    - name: Deploy on EC2
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPO: ${{ secrets.ECR_REPO_NAME }}
+        IMAGE_TAG: latest
+      run: |
+        ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << EOF
+          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin $ECR_REGISTRY
+          docker pull $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
+          docker stop my-backend || true && docker rm my-backend || true
+          docker run -d --name my-backend -p 80:8080 $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
+        EOF
