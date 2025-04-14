@@ -82,7 +82,7 @@ public class SecurityConfig {
         public CorsFilter corsFilter() {
                 CorsConfiguration corsConfiguration = new CorsConfiguration();
 
-                corsConfiguration.addAllowedOrigin("http://127.0.0.1:5500"); // Chỉ định frontend cụ thể
+                corsConfiguration.addAllowedOrigin("*"); // Chỉ định frontend cụ thể
                 corsConfiguration.addAllowedMethod("*");
                 corsConfiguration.addAllowedHeader("*");
                 corsConfiguration.setAllowCredentials(true);
