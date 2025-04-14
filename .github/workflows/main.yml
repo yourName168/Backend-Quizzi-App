@@ -93,7 +93,7 @@ jobs:
           docker stop quiz-app || true && docker rm quiz-app || true
           docker run -d --name quiz-app -p 80:8080 \
             --link mysql:mysql \
-            -e DBMS_CONNECTION=jdbc:mysql://mysql:3306/quiz-app \
+            -e DBMS_CONNECTION=jdbc:mysql://${DB_HOST}:3306/quiz-app \
             -e DBMS_USER=${DB_USER} \
             -e DBMS_PASSWORD=${DB_PASSWORD} \
             ${ECR_REGISTRY}/${ECR_REPO}:${IMAGE_TAG}
