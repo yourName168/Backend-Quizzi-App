@@ -18,6 +18,7 @@ FROM amazoncorretto:21.0.4
 # copy the jar file to the image
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
+EXPOSE 8080
 
 # run the application]
-ENTRYPOINT [ "java", "-jar", "app.jar", "-DskipTests" ]
+ENTRYPOINT [ "java", "-jar", "app.jar" ]

@@ -1,108 +1,46 @@
-name: Build & Deploy Docker to EC2
+name: Deploy via SSH (no ECR)
+
 on:
   push:
     branches: [main]
+
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
+
     steps:
-    - name: Checkout code
+    - name: Checkout source
       uses: actions/checkout@v3
-      
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v2
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ secrets.AWS_REGION }}
-        
-    - name: Log in to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
-      
-    - name: Build, tag, and push image to ECR
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPO: ${{ secrets.ECR_REPO_NAME }}
-        IMAGE_TAG: latest
-      run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG .
-        docker push $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
-        
+
     - name: Set up SSH
       run: |
         mkdir -p ~/.ssh
         echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
-        
+
+    - name: Copy project files to EC2
+      run: |
+        rsync -avz --exclude '.git' --exclude 'node_modules' ./ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:~/quiz-app/
+
     - name: Deploy on EC2
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPO: ${{ secrets.ECR_REPO_NAME }}
-        IMAGE_TAG: latest
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_REGION: ${{ secrets.AWS_REGION }}
-        DB_HOST: ${{ secrets.EC2_HOST }}
-        DB_USER: ${{ secrets.DB_USER }}
-        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-        MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
       run: |
         ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << EOF
-          export AWS_ACCESS_KEY_ID='${AWS_ACCESS_KEY_ID}'
-          export AWS_SECRET_ACCESS_KEY='${AWS_SECRET_ACCESS_KEY}'
-          export AWS_REGION='${AWS_REGION}'
-          export ECR_REGISTRY='${ECR_REGISTRY}'
-          export ECR_REPO='${ECR_REPO}'
-          export IMAGE_TAG='${IMAGE_TAG}'
-          
-          # Login to ECR
-          aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY}
-          
-          # Check if MySQL is running
-          echo "Checking if MySQL is running..."
-          if ! docker ps | grep mysql; then
-            echo "MySQL is not running. Starting MySQL container..."
-            # Check if MySQL container exists but stopped
-            if docker ps -a | grep mysql; then
-              docker start mysql
-            else
-              # Start a new MySQL container
-              docker run -d --name mysql \
-                -p 3306:3306 \
-                -e MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD} \
-                -e MYSQL_DATABASE=quiz-app \
-                -e MYSQL_USER=${DB_USER} \
-                -e MYSQL_PASSWORD=${DB_PASSWORD} \
-                mysql:8.0
-              
-              # Wait for MySQL to initialize
-              echo "Waiting for MySQL to initialize..."
-              sleep 20
-            fi
-          else
-            echo "MySQL is already running."
-          fi
-          
-          # Pull and start the application container
-          echo "Pulling application image..."
-          docker pull ${ECR_REGISTRY}/${ECR_REPO}:${IMAGE_TAG}
-          
-          echo "Starting application container..."
-          docker stop quiz-app || true && docker rm quiz-app || true
-          docker run -d --name quiz-app -p 80:8080 \
-            --link mysql:mysql \
-            -e DBMS_CONNECTION=jdbc:mysql://${DB_HOST}:3306/quiz-app \
-            -e DBMS_USER=${DB_USER} \
-            -e DBMS_PASSWORD=${DB_PASSWORD} \
-            ${ECR_REGISTRY}/${ECR_REPO}:${IMAGE_TAG}
-          
-          # Check if container is running
-          echo "Container status:"
-          docker ps -a | grep quiz-app
-          
-          # Check logs
-          echo "Container logs:"
-          docker logs quiz-app
+          cd ~/quiz-app
+
+          export DB_USER=${{ secrets.DB_USER }}
+          export DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+          export MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}
+
+          # Stop old containers
+          docker compose -f docker-compose.yml down || true
+
+          # Build and start
+          docker compose -f docker-compose.yml up -d --build
+
+          echo "=== Docker status ==="
+          docker ps
+
+          echo "=== Logs ==="
+          docker logs quiz-app --tail=50
         EOF
