@@ -50,25 +50,33 @@ jobs:
         # Copy docker-compose.yml to the EC2 instance
         scp docker-compose.yml ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:~/docker-compose.yml
         
-        ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+        # Prepare environment variables for substitution
+        ECR_REGISTRY_VALUE=$(echo $ECR_REGISTRY)
+        ECR_REPO_VALUE=$(echo $ECR_REPO)
+        IMAGE_TAG_VALUE=$(echo $IMAGE_TAG)
+        AWS_REGION_VALUE=$(echo $AWS_REGION)
+        DB_PASSWORD_VALUE=$(echo $DB_PASSWORD)
+        
+        # Use heredoc without single quotes to allow variable substitution
+        ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << EOF
           # Install Docker Compose if not already installed
           if ! command -v docker-compose &> /dev/null; then
-            sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+            sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-\$(uname -s)-\$(uname -m)" -o /usr/local/bin/docker-compose
             sudo chmod +x /usr/local/bin/docker-compose
           fi
           
-          # Set environment variables
-          export AWS_REGION='${AWS_REGION}'
-          export ECR_REGISTRY='${ECR_REGISTRY}'
-          export ECR_REPO='${ECR_REPO}'
-          export IMAGE_TAG='${IMAGE_TAG}'
-          export DB_PASSWORD='${DB_PASSWORD}'
+          # Set environment variables with actual values
+          export AWS_REGION='$AWS_REGION_VALUE'
+          export ECR_REGISTRY='$ECR_REGISTRY_VALUE'
+          export ECR_REPO='$ECR_REPO_VALUE'
+          export IMAGE_TAG='$IMAGE_TAG_VALUE'
+          export DB_PASSWORD='$DB_PASSWORD_VALUE'
           
           # Login to ECR
-          aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY}
+          aws ecr get-login-password --region $AWS_REGION_VALUE | docker login --username AWS --password-stdin $ECR_REGISTRY_VALUE
           
           # Pull the latest image
-          docker pull ${ECR_REGISTRY}/${ECR_REPO}:${IMAGE_TAG}
+          docker pull $ECR_REGISTRY_VALUE/$ECR_REPO_VALUE:$IMAGE_TAG_VALUE
           
           # Start containers with docker-compose
           docker-compose up -d
@@ -79,5 +87,5 @@ jobs:
           
           # Check logs for the app container (using the name from docker-compose)
           echo "Application container logs:"
-          docker logs quiz-app
+          docker logs quiz-app || echo "Container not found or not running yet"
         EOF
