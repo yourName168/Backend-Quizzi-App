@@ -38,45 +38,46 @@ jobs:
         echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+        
     - name: Deploy on EC2
-    env:
-      ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      ECR_REPO: ${{ secrets.ECR_REPO_NAME }}
-      IMAGE_TAG: latest
-      AWS_REGION: ${{ secrets.AWS_REGION }}
-      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-    run: |
-      # Copy docker-compose.yml to the EC2 instance
-      scp docker-compose.yml ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:~/docker-compose.yml
-      
-      ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-        # Install Docker Compose if not already installed
-        if ! command -v docker-compose &> /dev/null; then
-          sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-          sudo chmod +x /usr/local/bin/docker-compose
-        fi
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPO: ${{ secrets.ECR_REPO_NAME }}
+        IMAGE_TAG: latest
+        AWS_REGION: ${{ secrets.AWS_REGION }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      run: |
+        # Copy docker-compose.yml to the EC2 instance
+        scp docker-compose.yml ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:~/docker-compose.yml
         
-        # Set environment variables
-        export AWS_REGION='${AWS_REGION}'
-        export ECR_REGISTRY='${ECR_REGISTRY}'
-        export ECR_REPO='${ECR_REPO}'
-        export IMAGE_TAG='${IMAGE_TAG}'
-        export DB_PASSWORD='${DB_PASSWORD}'
-        
-        # Login to ECR
-        aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY}
-        
-        # Pull the latest image
-        docker pull ${ECR_REGISTRY}/${ECR_REPO}:${IMAGE_TAG}
-        
-        # Start containers with docker-compose
-        docker-compose up -d
-        
-        # Check container status
-        echo "Container status:"
-        docker ps -a | grep quiz-app
-        
-        # Check logs for the app container (using the name from docker-compose)
-        echo "Application container logs:"
-        docker logs quiz-app
-      EOF
+        ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+          # Install Docker Compose if not already installed
+          if ! command -v docker-compose &> /dev/null; then
+            sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+            sudo chmod +x /usr/local/bin/docker-compose
+          fi
+          
+          # Set environment variables
+          export AWS_REGION='${AWS_REGION}'
+          export ECR_REGISTRY='${ECR_REGISTRY}'
+          export ECR_REPO='${ECR_REPO}'
+          export IMAGE_TAG='${IMAGE_TAG}'
+          export DB_PASSWORD='${DB_PASSWORD}'
+          
+          # Login to ECR
+          aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY}
+          
+          # Pull the latest image
+          docker pull ${ECR_REGISTRY}/${ECR_REPO}:${IMAGE_TAG}
+          
+          # Start containers with docker-compose
+          docker-compose up -d
+          
+          # Check container status
+          echo "Container status:"
+          docker ps -a | grep quiz-app
+          
+          # Check logs for the app container (using the name from docker-compose)
+          echo "Application container logs:"
+          docker logs quiz-app
+        EOF
