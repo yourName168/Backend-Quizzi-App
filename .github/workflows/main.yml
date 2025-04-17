@@ -39,7 +39,7 @@ jobs:
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
         
-    - name: Deploy to EC2
+    - name: Create deployment script
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPO: ${{ secrets.ECR_REPO_NAME }}
@@ -49,7 +49,54 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       run: |
-        # Create a temporary .env file to transfer
+        # Create a deployment script
+        cat > deploy.sh << 'EOFSCRIPT'
+        #!/bin/bash
+        
+        # Install Docker Compose if needed
+        if ! command -v docker-compose &> /dev/null; then
+          sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
+        fi
+        
+        # Source environment variables
+        source .env
+        
+        # Configure AWS credentials
+        mkdir -p ~/.aws
+        cat > ~/.aws/credentials << EOF
+        [default]
+        aws_access_key_id = $AWS_ACCESS_KEY_ID
+        aws_secret_access_key = $AWS_SECRET_ACCESS_KEY
+        region = $AWS_REGION
+        EOF
+        
+        chmod 600 ~/.aws/credentials
+        
+        # Login to ECR
+        aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
+        
+        # Pull the latest image
+        docker pull $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
+        
+        # Start containers with environment variables
+        docker-compose up -d
+        
+        # Wait for containers to start
+        sleep 5
+        
+        # Check container status
+        echo "Container status:"
+        docker ps -a
+        
+        # Check logs for the app container
+        echo "Application container logs:"
+        docker logs quiz-app 2>&1 || echo "Container not found or not running yet"
+        EOFSCRIPT
+        
+        chmod +x deploy.sh
+        
+        # Create .env file with all necessary variables
         cat > .env << EOF
         ECR_REGISTRY=$ECR_REGISTRY
         ECR_REPO=$ECR_REPO
@@ -60,51 +107,13 @@ jobs:
         DB_PASSWORD=$DB_PASSWORD
         EOF
         
-        # Copy docker-compose.yml and .env to EC2
-        scp docker-compose.yml .env ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:~/
+    - name: Deploy to EC2
+      run: |
+        # Copy files to EC2
+        scp -o StrictHostKeyChecking=accept-new docker-compose.yml .env deploy.sh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:~/
         
-        # Execute deployment commands on EC2
-        ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << EOF
-          # Install Docker Compose if needed
-          if ! command -v docker-compose &> /dev/null; then
-            sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-\$(uname -s)-\$(uname -m)" -o /usr/local/bin/docker-compose
-            sudo chmod +x /usr/local/bin/docker-compose
-          fi
-          
-          # Load environment variables
-          source .env
-          
-          # Configure AWS credentials
-          mkdir -p ~/.aws
-          cat > ~/.aws/credentials << EOC
-          [default]
-          aws_access_key_id = $AWS_ACCESS_KEY_ID
-          aws_secret_access_key = $AWS_SECRET_ACCESS_KEY
-          region = $AWS_REGION
-          EOC
-          
-          chmod 600 ~/.aws/credentials
-          
-          # Login to ECR
-          aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
-          
-          # Pull the latest image
-          docker pull $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
-          
-          # Start containers with environment variables
-          docker-compose up -d
-          
-          # Wait for containers to start
-          sleep 10
-          
-          # Check container status
-          echo "Container status:"
-          docker ps -a
-          
-          # Check logs for the app container
-          echo "Application container logs:"
-          docker logs quiz-app 2>&1 || echo "Container not found or not running yet"
-        EOF
+        # Execute the deployment script
+        ssh -tt -o StrictHostKeyChecking=accept-new ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "bash -l ./deploy.sh"
         
-        # Remove the temporary .env file
-        rm .env
+        # Clean up local files
+        rm deploy.sh .env
