@@ -14,9 +14,7 @@ services:
     restart: always
 
   app:
-    build:
-      context: .             
-      dockerfile: Dockerfile 
+    image: ${ECR_REGISTRY}/${ECR_REPO}:${IMAGE_TAG} 
     container_name: quiz-app
     depends_on:
       - db
