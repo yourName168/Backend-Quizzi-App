@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="24379842-418e-4053-94cb-1ea5c7ebacc0" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/gameplay-service/src/main/java/com/example/gameplayservice/client/QuestionClient.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gameplay-service/src/main/java/com/example/gameplayservice/client/QuizClient.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gameplay-service/src/main/java/com/example/gameplayservice/client/UserClient.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gameplay-service/src/main/java/com/example/gameplayservice/controller/ParticipantController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gameplay-service/src/main/java/com/example/gameplayservice/controller/QuestionTrackingController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gameplay-service/src/main/java/com/example/gameplayservice/controller/QuizGameTrackingController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gameplay-service/src/main/java/com/example/gameplayservice/dto/ParticipantDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gameplay-service/src/main/java/com/example/gameplayservice/dto/QuestionTrackingDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gameplay-service/src/main/java/com/example/gameplayservice/dto/QuizGameTrackingDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gameplay-service/src/main/java/com/example/gameplayservice/model/Participant.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gameplay-service/src/main/java/com/example/gameplayservice/model/QuestionTracking.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gameplay-service/src/main/java/com/example/gameplayservice/model/QuizGameTracking.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gameplay-service/src/main/java/com/example/gameplayservice/repository/ParticipantRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gameplay-service/src/main/java/com/example/gameplayservice/repository/QuestionTrackingRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gameplay-service/src/main/java/com/example/gameplayservice/repository/QuizGameTrackingRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gameplay-service/src/main/java/com/example/gameplayservice/service/ParticipantService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gameplay-service/src/main/java/com/example/gameplayservice/service/QuestionTrackingService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gameplay-service/src/main/java/com/example/gameplayservice/service/QuizGameTrackingService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gameplay-service/src/main/java/com/example/gameplayservice/util/DataGenerator.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/question-service/src/main/java/com/example/questionservice/client/QuizClient.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/question-service/src/main/java/com/example/questionservice/controller/QuestionController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/question-service/src/main/java/com/example/questionservice/controller/QuestionTypeController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/question-service/src/main/java/com/example/questionservice/dto/ChoiceOptionDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/question-service/src/main/java/com/example/questionservice/dto/OptionDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/question-service/src/main/java/com/example/questionservice/dto/PuzzleOptionDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/question-service/src/main/java/com/example/questionservice/dto/QuestionChoiceDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/question-service/src/main/java/com/example/questionservice/dto/QuestionDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/question-service/src/main/java/com/example/questionservice/dto/QuestionPuzzleDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/question-service/src/main/java/com/example/questionservice/dto/QuestionSliderDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/question-service/src/main/java/com/example/questionservice/dto/QuestionTrueFalseDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/question-service/src/main/java/com/example/questionservice/dto/QuestionTypeTextDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/question-service/src/main/java/com/example/questionservice/model/ChoiceOption.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/question-service/src/main/java/com/example/questionservice/model/Option.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/question-service/src/main/java/com/example/questionservice/model/PuzzleOption.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/question-service/src/main/java/com/example/questionservice/model/Question.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/question-service/src/main/java/com/example/questionservice/model/QuestionChoice.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/question-service/src/main/java/com/example/questionservice/model/QuestionPuzzle.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/question-service/src/main/java/com/example/questionservice/model/QuestionSlider.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/question-service/src/main/java/com/example/questionservice/model/QuestionTrueFalse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/question-service/src/main/java/com/example/questionservice/model/QuestionType.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/question-service/src/main/java/com/example/questionservice/model/QuestionTypeText.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/question-service/src/main/java/com/example/questionservice/repository/OptionRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/question-service/src/main/java/com/example/questionservice/repository/QuestionChoiceRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/question-service/src/main/java/com/example/questionservice/repository/QuestionPuzzleRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/question-service/src/main/java/com/example/questionservice/repository/QuestionRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/question-service/src/main/java/com/example/questionservice/repository/QuestionSliderRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/question-service/src/main/java/com/example/questionservice/repository/QuestionTrueFalseRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/question-service/src/main/java/com/example/questionservice/repository/QuestionTypeRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/question-service/src/main/java/com/example/questionservice/repository/QuestionTypeTextRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/question-service/src/main/java/com/example/questionservice/service/QuestionService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/question-service/src/main/java/com/example/questionservice/service/QuestionTypeService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/question-service/src/main/java/com/example/questionservice/util/DataGenerator.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/quiz-service/src/main/java/com/example/quizservice/client/UserClient.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/quiz-service/src/main/java/com/example/quizservice/controller/QuizCollectionController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/quiz-service/src/main/java/com/example/quizservice/controller/QuizController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/quiz-service/src/main/java/com/example/quizservice/controller/QuizGameController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/quiz-service/src/main/java/com/example/quizservice/dto/QuizDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/quiz-service/src/main/java/com/example/quizservice/dto/QuizGameDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/quiz-service/src/main/java/com/example/quizservice/model/Quiz.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/quiz-service/src/main/java/com/example/quizservice/model/QuizCollection.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/quiz-service/src/main/java/com/example/quizservice/model/QuizGame.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/quiz-service/src/main/java/com/example/quizservice/repository/QuizCollectionRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/quiz-service/src/main/java/com/example/quizservice/repository/QuizGameRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/quiz-service/src/main/java/com/example/quizservice/repository/QuizRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/quiz-service/src/main/java/com/example/quizservice/service/QuizCollectionService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/quiz-service/src/main/java/com/example/quizservice/service/QuizGameService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/quiz-service/src/main/java/com/example/quizservice/service/QuizService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/quiz-service/src/main/java/com/example/quizservice/util/DataGenerator.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/example/userservice/config/SecurityConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/example/userservice/controller/UserController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/example/userservice/controller/UserFollowController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/example/userservice/controller/UserMusicEffectController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/example/userservice/dto/UserDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/example/userservice/dto/UserMusicEffectDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/example/userservice/model/UserFollow.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/example/userservice/model/UserMusicEffect.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/example/userservice/repository/UserFollowRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/example/userservice/repository/UserMusicEffectRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/example/userservice/repository/UserRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/example/userservice/service/UserFollowService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/example/userservice/service/UserMusicEffect.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/example/userservice/service/UserService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/example/userservice/util/DataGenerator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitattributes" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/workflows/main.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mvnw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mvnw.cmd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lth/identify_service/IdentifyServiceApplication.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lth/identify_service/configuration/ApplicationInitConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lth/identify_service/configuration/JWTAuthenticationEntryPoint.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lth/identify_service/configuration/SecurityConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lth/identify_service/controller/AuthenticationController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lth/identify_service/controller/PermissionController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lth/identify_service/controller/RoleController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lth/identify_service/controller/UserController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lth/identify_service/dto/request/AuthenticationRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lth/identify_service/dto/request/IntrospectRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lth/identify_service/dto/request/PermissionRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lth/identify_service/dto/request/RoleRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lth/identify_service/dto/request/UserCreationRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lth/identify_service/dto/request/UserUpdateRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lth/identify_service/dto/request/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lth/identify_service/dto/response/ApiResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lth/identify_service/dto/response/AuthenticationResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lth/identify_service/dto/response/IntrospectResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lth/identify_service/dto/response/PermissionResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lth/identify_service/dto/response/RoleResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lth/identify_service/dto/response/UserResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lth/identify_service/entity/Permission.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lth/identify_service/entity/Role.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lth/identify_service/entity/User.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lth/identify_service/enums/Role.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lth/identify_service/exception/AppException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lth/identify_service/exception/ErrorCode.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lth/identify_service/exception/GlobalExceptionHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lth/identify_service/mapper/PermissionMapper.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lth/identify_service/mapper/RoleMapper.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lth/identify_service/mapper/UserMapper.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lth/identify_service/repository/PermissionRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lth/identify_service/repository/RoleRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lth/identify_service/repository/UserRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lth/identify_service/service/AuthenticationService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lth/identify_service/service/PermissionService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lth/identify_service/service/RoleService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lth/identify_service/service/UserService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/lth/identify_service/IdentifyServiceApplicationTests.java" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 4
+}</component>
+  <component name="ProjectId" id="2wGG2BfdkZYUUAKMUzf7oNzbUbM" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "D:/hk2/Phat_trien_thiet_bi_di_dong/backend_quiz/Backend-Quizzi-App/api-gateway",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\hk2\Phat_trien_thiet_bi_di_dong\backend_quiz\Backend-Quizzi-App\api-gateway\src\main\java\com\example\apigateway" />
+      <recent name="D:\hk2\Phat_trien_thiet_bi_di_dong\backend_quiz\Backend-Quizzi-App\eureka-server\src\main\java\com\example\eurekaserver" />
+      <recent name="D:\hk2\Phat_trien_thiet_bi_di_dong\backend_quiz\Backend-Quizzi-App\gameplay-service\src\main\java\com\example\gameplayservice" />
+      <recent name="D:\hk2\Phat_trien_thiet_bi_di_dong\backend_quiz\Backend-Quizzi-App\question-service\src\main\java\com\example\questionservice" />
+      <recent name="D:\hk2\Phat_trien_thiet_bi_di_dong\backend_quiz\Backend-Quizzi-App\quiz-service\src\main\java\com\example\quizservice" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-fdfe4dae3a2d-intellij.indexing.shared.core-IU-243.21565.193" />
+        <option value="bundled-js-predefined-d6986cc7102b-e768b9ed790e-JavaScript-IU-243.21565.193" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="24379842-418e-4053-94cb-1ea5c7ebacc0" name="Changes" comment="" />
+      <created>1745660288054</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1745660288054</updated>
+      <workItem from="1745660289218" duration="128000" />
+      <workItem from="1745660461984" duration="5221000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
