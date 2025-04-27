@@ -1,0 +1,4 @@
+CREATE DATABASE IF NOT EXISTS m_quiz_user_db;
+CREATE DATABASE IF NOT EXISTS m_quiz_quiz_db;
+CREATE DATABASE IF NOT EXISTS m_quiz_question_db;
+CREATE DATABASE IF NOT EXISTS m_quiz_gameplay_db;
