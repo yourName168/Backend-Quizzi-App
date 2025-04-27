@@ -1,0 +1,41 @@
+package com.example.apigateway.config;
+
+import org.springdoc.core.properties.AbstractSwaggerUiConfigProperties;
+import org.springdoc.core.properties.SwaggerUiConfigProperties;
+import org.springframework.cloud.gateway.route.RouteDefinition;
+import org.springframework.cloud.gateway.route.RouteDefinitionLocator;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+@Configuration
+public class SwaggerResourceConfig {
+
+    @Bean
+    @Primary
+    public SwaggerUiConfigProperties swaggerUiConfigProperties(RouteDefinitionLocator locator) {
+        SwaggerUiConfigProperties swaggerUiConfig = new SwaggerUiConfigProperties();
+        List<RouteDefinition> definitions = locator.getRouteDefinitions().collectList().block();
+        
+        Set<AbstractSwaggerUiConfigProperties.SwaggerUrl> urls = new HashSet<>();
+        
+        if (definitions != null) {
+            definitions.stream()
+                .filter(routeDefinition -> routeDefinition.getId().endsWith("-service"))
+                .forEach(routeDefinition -> {
+                    String name = routeDefinition.getId().replace("-service", "");
+                    AbstractSwaggerUiConfigProperties.SwaggerUrl swaggerUrl = new AbstractSwaggerUiConfigProperties.SwaggerUrl();
+                    swaggerUrl.setName(name.substring(0, 1).toUpperCase() + name.substring(1) + " Service");
+                    swaggerUrl.setUrl("/" + routeDefinition.getId() + "/v3/api-docs");
+                    urls.add(swaggerUrl);
+                });
+        }
+        
+        swaggerUiConfig.setUrls(urls);
+        return swaggerUiConfig;
+    }
+}
