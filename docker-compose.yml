@@ -36,7 +36,7 @@ services:
 
   api-gateway:
     build:
-      context: ./api-gateway
+      context: ./gateway
       dockerfile: Dockerfile
     container_name: api-gateway
     ports:
@@ -51,7 +51,7 @@ services:
 
   user-service:
     build:
-      context: ./user-service
+      context: ./services/user-service
       dockerfile: Dockerfile
     container_name: user-service
     ports:
@@ -71,7 +71,7 @@ services:
 
   quiz-service:
     build:
-      context: ./quiz-service
+      context: ./services/quiz-service
       dockerfile: Dockerfile
     container_name: quiz-service
     ports:
@@ -91,7 +91,7 @@ services:
 
   question-service:
     build:
-      context: ./question-service
+      context: ./services/question-service
       dockerfile: Dockerfile
     container_name: question-service
     ports:
@@ -111,7 +111,7 @@ services:
 
   gameplay-service:
     build:
-      context: ./gameplay-service
+      context: ./services/gameplay-service
       dockerfile: Dockerfile
     container_name: gameplay-service
     ports:
@@ -124,6 +124,21 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - quiz-network
+
+  identity-service:
+    build:
+      context: ./services/identity-service
+      dockerfile: Dockerfile
+    container_name: identity-service
+    ports:
+      - "8085:8085"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    depends_on:
       eureka-server:
         condition: service_healthy
     networks:

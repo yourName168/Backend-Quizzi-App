@@ -1,0 +1,311 @@
+openapi: 3.0.0
+info:
+  title: Identity Service API
+  description: API for authentication and authorization operations
+  version: 1.0.0
+  contact:
+    name: Quiz Application Team
+
+servers:
+  - url: http://localhost:8080/api/auth
+    description: API Gateway URL for Identity Service in local development
+  - url: https://quiz-app.example.com/api/auth
+    description: Production API Gateway URL
+
+tags:
+  - name: Authentication
+    description: Authentication and Authorization operations
+
+paths:
+  /register:
+    post:
+      tags:
+        - Authentication
+      summary: Register a new user
+      description: Creates a new user account in the system via User Service
+      operationId: register
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JwtAuthResponse'
+        '400':
+          description: Bad request - validation errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Conflict - username or email already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /login:
+    post:
+      tags:
+        - Authentication
+      summary: Login to the system
+      description: Authenticates user credentials and returns JWT token
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JwtAuthResponse'
+        '401':
+          description: Authentication failed - invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /token/refresh:
+    post:
+      tags:
+        - Authentication
+      summary: Refresh JWT token
+      description: Issues a new JWT token using the refresh token
+      operationId: refreshToken
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenRequest'
+      responses:
+        '200':
+          description: Token refreshed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JwtAuthResponse'
+        '401':
+          description: Unauthorized - invalid or expired refresh token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /me:
+    get:
+      tags:
+        - Authentication
+      summary: Get current user information
+      description: Returns user details of the authenticated user
+      operationId: getCurrentUser
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+        '401':
+          description: Unauthorized - invalid or missing token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      
+  schemas:
+    RegisterRequest:
+      type: object
+      required:
+        - username
+        - email
+        - password
+      properties:
+        username:
+          type: string
+          description: Username for the new account
+          example: johndoe
+          minLength: 3
+          maxLength: 50
+        email:
+          type: string
+          format: email
+          description: Email address
+          example: john.doe@example.com
+        password:
+          type: string
+          description: Password for the account
+          example: securePassword123
+          minLength: 6
+          maxLength: 128
+        fullName:
+          type: string
+          description: User's full name
+          example: John Doe
+        lastName:
+          type: string
+          description: User's last name
+          example: Doe
+        country:
+          type: string
+          description: User's country
+          example: United States
+        dateOfBirth:
+          type: string
+          description: User's date of birth in ISO format
+          example: 1990-01-01
+        age:
+          type: integer
+          description: User's age
+          example: 32
+        avatar:
+          type: string
+          description: URL to user's avatar image
+          example: https://example.com/avatars/johndoe.png
+    
+    LoginRequest:
+      type: object
+      required:
+        - usernameOrEmail
+        - password
+      properties:
+        usernameOrEmail:
+          type: string
+          description: Username or email for login
+          example: johndoe
+        password:
+          type: string
+          description: User password
+          example: securePassword123
+    
+    RefreshTokenRequest:
+      type: object
+      required:
+        - refreshToken
+      properties:
+        refreshToken:
+          type: string
+          description: Refresh token received during login or previous refresh
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVC...
+    
+    JwtAuthResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          description: JWT access token
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        refreshToken:
+          type: string
+          description: JWT refresh token
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVC...
+        tokenType:
+          type: string
+          description: Type of token
+          example: Bearer
+          default: Bearer
+        userId:
+          type: integer
+          format: int64
+          description: User ID
+          example: 1
+        username:
+          type: string
+          description: Username
+          example: johndoe
+        email:
+          type: string
+          description: Email address
+          example: john.doe@example.com
+    
+    UserDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: User ID
+          example: 1
+        username:
+          type: string
+          description: Username
+          example: johndoe
+        email:
+          type: string
+          description: Email address
+          example: john.doe@example.com
+        fullName:
+          type: string
+          description: User's full name
+          example: John Doe
+        lastName:
+          type: string
+          description: User's last name
+          example: Doe
+        country:
+          type: string
+          description: User's country
+          example: United States
+        dateOfBirth:
+          type: string
+          description: User's date of birth
+          example: 1990-01-01
+        age:
+          type: integer
+          description: User's age
+          example: 32
+        avatar:
+          type: string
+          description: URL to user's avatar
+          example: https://example.com/avatars/johndoe.png
+        createdAt:
+          type: string
+          format: date-time
+          description: Account creation timestamp
+          example: 2023-01-15T12:00:00Z
+    
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+          description: HTTP status code
+          example: 400
+        message:
+          type: string
+          description: Error message
+          example: Username already exists
+        errors:
+          type: array
+          description: Detailed validation errors
+          items:
+            type: string
+          example: ["Username must be at least 3 characters", "Email format is invalid"]
+        timestamp:
+          type: string
+          format: date-time
+          description: Error timestamp
+          example: 2023-01-15T12:00:00Z

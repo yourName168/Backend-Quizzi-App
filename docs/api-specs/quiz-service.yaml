@@ -1,0 +1,792 @@
+openapi: 3.0.3
+info:
+  title: Quiz Service API
+  description: API for managing quizzes and collections
+  version: 1.0.0
+  contact:
+    email: admin@quizapp.com
+
+servers:
+  - url: 'http://localhost:8080/api'
+    description: Local environment through API Gateway
+  - url: 'http://localhost:8082/api'
+    description: Direct access to Quiz service
+
+tags:
+  - name: quizzes
+    description: Quiz management operations
+  - name: quiz-collections
+    description: Quiz collection management operations
+  - name: quiz-categories
+    description: Quiz category operations
+  - name: quiz-tags
+    description: Quiz tagging operations
+
+paths:
+  /quizzes:
+    get:
+      tags:
+        - quizzes
+      summary: Get all quizzes
+      description: Retrieve a list of all quizzes with optional filtering
+      operationId: getAllQuizzes
+      parameters:
+        - name: categoryId
+          in: query
+          description: Category ID to filter by
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: creatorId
+          in: query
+          description: Creator ID to filter by
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: tagId
+          in: query
+          description: Tag ID to filter by
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+        - name: size
+          in: query
+          description: Number of items per page
+          required: false
+          schema:
+            type: integer
+            default: 10
+            minimum: 1
+            maximum: 100
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Quiz'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      tags:
+        - quizzes
+      summary: Create new quiz
+      description: Create a new quiz
+      operationId: createQuiz
+      requestBody:
+        description: Quiz creation details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuizDTO'
+      responses:
+        '201':
+          description: Quiz created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quiz'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+                
+  /quizzes/{id}:
+    get:
+      tags:
+        - quizzes
+      summary: Get quiz by ID
+      description: Retrieve quiz information by ID
+      operationId: getQuizById
+      parameters:
+        - name: id
+          in: path
+          description: Quiz ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quiz'
+        '404':
+          description: Quiz not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+                
+    put:
+      tags:
+        - quizzes
+      summary: Update quiz
+      description: Update quiz information
+      operationId: updateQuiz
+      parameters:
+        - name: id
+          in: path
+          description: Quiz ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Quiz update details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuizDTO'
+      responses:
+        '200':
+          description: Quiz updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quiz'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Quiz not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+                
+    delete:
+      tags:
+        - quizzes
+      summary: Delete quiz
+      description: Delete quiz by ID
+      operationId: deleteQuiz
+      parameters:
+        - name: id
+          in: path
+          description: Quiz ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Quiz deleted successfully
+        '404':
+          description: Quiz not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+                
+  /quizzes/search:
+    get:
+      tags:
+        - quizzes
+      summary: Search for quizzes
+      description: Search for quizzes by title, description or category
+      operationId: searchQuizzes
+      parameters:
+        - name: query
+          in: query
+          description: Search query string
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+        - name: size
+          in: query
+          description: Number of items per page
+          required: false
+          schema:
+            type: integer
+            default: 10
+            minimum: 1
+            maximum: 100
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Quiz'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+                
+  /quiz-collections:
+    get:
+      tags:
+        - quiz-collections
+      summary: Get all quiz collections
+      description: Retrieve a list of all quiz collections
+      operationId: getAllQuizCollections
+      parameters:
+        - name: userId
+          in: query
+          description: User ID to filter by
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+        - name: size
+          in: query
+          description: Number of items per page
+          required: false
+          schema:
+            type: integer
+            default: 10
+            minimum: 1
+            maximum: 100
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/QuizCollection'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      tags:
+        - quiz-collections
+      summary: Create new collection
+      description: Create a new quiz collection
+      operationId: createQuizCollection
+      requestBody:
+        description: Collection creation details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuizCollectionDTO'
+      responses:
+        '201':
+          description: Collection created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizCollection'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+                
+  /quiz-collections/{id}:
+    get:
+      tags:
+        - quiz-collections
+      summary: Get collection by ID
+      description: Retrieve collection information by ID
+      operationId: getQuizCollectionById
+      parameters:
+        - name: id
+          in: path
+          description: Collection ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizCollection'
+        '404':
+          description: Collection not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+                
+  /quiz-categories:
+    get:
+      tags:
+        - quiz-categories
+      summary: Get all quiz categories
+      description: Retrieve a list of all quiz categories
+      operationId: getAllQuizCategories
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/QuizCategory'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      tags:
+        - quiz-categories
+      summary: Create new category
+      description: Create a new quiz category
+      operationId: createQuizCategory
+      requestBody:
+        description: Category creation details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuizCategoryDTO'
+      responses:
+        '201':
+          description: Category created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizCategory'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+                
+  /quiz-tags:
+    get:
+      tags:
+        - quiz-tags
+      summary: Get all quiz tags
+      description: Retrieve a list of all quiz tags
+      operationId: getAllQuizTags
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/QuizTag'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      tags:
+        - quiz-tags
+      summary: Create new tag
+      description: Create a new quiz tag
+      operationId: createQuizTag
+      requestBody:
+        description: Tag creation details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuizTagDTO'
+      responses:
+        '201':
+          description: Tag created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizTag'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+                
+components:
+  schemas:
+    Quiz:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Quiz ID
+          example: 1
+        title:
+          type: string
+          description: Quiz title
+          example: "General Knowledge Quiz"
+        description:
+          type: string
+          description: Quiz description
+          example: "A quiz about general knowledge topics"
+        creatorId:
+          type: integer
+          format: int64
+          description: ID of quiz creator
+          example: 101
+        categoryId:
+          type: integer
+          format: int64
+          description: Category ID
+          example: 2
+        createdAt:
+          type: string
+          format: date-time
+          description: Quiz creation date
+          example: 2023-05-01T12:00:00Z
+        updatedAt:
+          type: string
+          format: date-time
+          description: Quiz last update date
+          example: 2023-05-02T14:30:00Z
+        totalQuestions:
+          type: integer
+          description: Total number of questions in the quiz
+          example: 10
+        timeLimit:
+          type: integer
+          description: Time limit in minutes
+          example: 15
+        difficulty:
+          type: string
+          description: Quiz difficulty level
+          enum: [EASY, MEDIUM, HARD]
+          example: MEDIUM
+        isPublished:
+          type: boolean
+          description: Whether the quiz is published
+          example: true
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuizTag'
+          description: Quiz tags
+        
+    QuizDTO:
+      type: object
+      required:
+        - title
+        - creatorId
+        - categoryId
+      properties:
+        title:
+          type: string
+          description: Quiz title
+          example: "General Knowledge Quiz"
+        description:
+          type: string
+          description: Quiz description
+          example: "A quiz about general knowledge topics"
+        creatorId:
+          type: integer
+          format: int64
+          description: ID of quiz creator
+          example: 101
+        categoryId:
+          type: integer
+          format: int64
+          description: Category ID
+          example: 2
+        timeLimit:
+          type: integer
+          description: Time limit in minutes
+          example: 15
+        difficulty:
+          type: string
+          description: Quiz difficulty level
+          enum: [EASY, MEDIUM, HARD]
+          example: MEDIUM
+        isPublished:
+          type: boolean
+          description: Whether the quiz is published
+          example: true
+        tagIds:
+          type: array
+          items:
+            type: integer
+            format: int64
+          description: List of tag IDs
+          example: [1, 4, 7]
+    
+    QuizCollection:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Collection ID
+          example: 1
+        name:
+          type: string
+          description: Collection name
+          example: "My Favorite Quizzes"
+        description:
+          type: string
+          description: Collection description
+          example: "A collection of my favorite quizzes"
+        userId:
+          type: integer
+          format: int64
+          description: User ID who owns the collection
+          example: 101
+        createdAt:
+          type: string
+          format: date-time
+          description: Collection creation date
+          example: 2023-05-01T12:00:00Z
+        quizzes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Quiz'
+          description: Quizzes in the collection
+    
+    QuizCollectionDTO:
+      type: object
+      required:
+        - name
+        - userId
+      properties:
+        name:
+          type: string
+          description: Collection name
+          example: "My Favorite Quizzes"
+        description:
+          type: string
+          description: Collection description
+          example: "A collection of my favorite quizzes"
+        userId:
+          type: integer
+          format: int64
+          description: User ID who owns the collection
+          example: 101
+        quizIds:
+          type: array
+          items:
+            type: integer
+            format: int64
+          description: List of quiz IDs
+          example: [1, 5, 9]
+    
+    QuizCategory:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Category ID
+          example: 1
+        name:
+          type: string
+          description: Category name
+          example: "Science"
+        description:
+          type: string
+          description: Category description
+          example: "Quizzes about scientific topics"
+        iconUrl:
+          type: string
+          description: URL to category icon
+          example: "https://example.com/icons/science.png"
+    
+    QuizCategoryDTO:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: Category name
+          example: "Science"
+        description:
+          type: string
+          description: Category description
+          example: "Quizzes about scientific topics"
+        iconUrl:
+          type: string
+          description: URL to category icon
+          example: "https://example.com/icons/science.png"
+    
+    QuizTag:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Tag ID
+          example: 1
+        name:
+          type: string
+          description: Tag name
+          example: "Physics"
+    
+    QuizTagDTO:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: Tag name
+          example: "Physics"
+    
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+          description: HTTP status code
+          example: 400
+        message:
+          type: string
+          description: Error message
+          example: "Invalid input"
+        timestamp:
+          type: string
+          format: date-time
+          description: Time when the error occurred
+          example: 2023-05-04T12:00:00Z
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearerAuth: []

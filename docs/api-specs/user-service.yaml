@@ -1,0 +1,801 @@
+openapi: 3.0.0
+info:
+  title: User Service API
+  description: API for user management operations
+  version: 1.0.0
+  contact:
+    name: Quiz Application Team
+
+servers:
+  - url: http://localhost:8080/api/users
+    description: API Gateway URL for User Service in local development
+  - url: https://quiz-app.example.com/api/users
+    description: Production API Gateway URL
+
+tags:
+  - name: Users
+    description: User management operations
+  - name: User Follows
+    description: User relationship operations
+  - name: User Music Effects
+    description: User music and effects preferences
+
+paths:
+  /:
+    get:
+      tags:
+        - Users
+      summary: Get all users
+      description: Returns a list of all users
+      operationId: getAllUsers
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          description: Page number for pagination
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          description: Number of items per page
+          required: false
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: List of users retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserResponse'
+                  totalElements:
+                    type: integer
+                  totalPages:
+                    type: integer
+                  size:
+                    type: integer
+                  number:
+                    type: integer
+        '401':
+          description: Unauthorized - invalid or missing token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden - insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    
+    post:
+      tags:
+        - Users
+      summary: Create a new user
+      description: Creates a new user in the system
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreationRequest'
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Bad request - validation errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Conflict - username or email already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  
+  /authenticate:
+    post:
+      tags:
+        - Users
+      summary: Authenticate a user
+      description: Authenticates user credentials for identity service
+      operationId: authenticateUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - usernameOrEmail
+                - password
+              properties:
+                usernameOrEmail:
+                  type: string
+                  description: Username or email for login
+                  example: johndoe
+                password:
+                  type: string
+                  description: User password
+                  example: securePassword123
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '401':
+          description: Authentication failed - invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  
+  /{userId}:
+    get:
+      tags:
+        - Users
+      summary: Get user by ID
+      description: Returns a user by their ID
+      operationId: getUserById
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          description: ID of the user to retrieve
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: User retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '401':
+          description: Unauthorized - invalid or missing token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    
+    put:
+      tags:
+        - Users
+      summary: Update user
+      description: Updates an existing user's information
+      operationId: updateUser
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          description: ID of the user to update
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdateRequest'
+      responses:
+        '200':
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Bad request - validation errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - invalid or missing token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden - insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    
+    delete:
+      tags:
+        - Users
+      summary: Delete user
+      description: Deletes a user by their ID
+      operationId: deleteUser
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          description: ID of the user to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: User deleted successfully
+        '401':
+          description: Unauthorized - invalid or missing token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden - insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  
+  /username/{username}:
+    get:
+      tags:
+        - Users
+      summary: Get user by username
+      description: Returns a user by their username
+      operationId: getUserByUsername
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: username
+          in: path
+          description: Username of the user to retrieve
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '401':
+          description: Unauthorized - invalid or missing token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  
+  /getMyInfor:
+    get:
+      tags:
+        - Users
+      summary: Get current user information
+      description: Returns the information of the currently authenticated user
+      operationId: getMyInfor
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User information retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '401':
+          description: Unauthorized - invalid or missing token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # User Follows endpoints
+  /user-follows:
+    get:
+      tags:
+        - User Follows
+      summary: Get user follows
+      description: Returns list of users followed by the current user
+      operationId: getUserFollows
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: query
+          description: ID of user whose follows to retrieve
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: page
+          in: query
+          description: Page number for pagination
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          description: Number of items per page
+          required: false
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: User follows retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserFollowResponse'
+                  totalElements:
+                    type: integer
+                  totalPages:
+                    type: integer
+                  size:
+                    type: integer
+                  number:
+                    type: integer
+        '401':
+          description: Unauthorized - invalid or missing token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    
+    post:
+      tags:
+        - User Follows
+      summary: Create user follow relationship
+      description: Creates a follow relationship between users
+      operationId: createUserFollow
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserFollowRequest'
+      responses:
+        '201':
+          description: User follow relationship created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserFollowResponse'
+        '400':
+          description: Bad request - validation errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - invalid or missing token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Conflict - follow relationship already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # User Music Effects endpoints
+  /user-music-effects/{userId}:
+    get:
+      tags:
+        - User Music Effects
+      summary: Get user music effects settings
+      description: Returns music and effects settings for a user
+      operationId: getUserMusicEffects
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          description: ID of the user to retrieve settings for
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: User music effects retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserMusicEffectResponse'
+        '401':
+          description: Unauthorized - invalid or missing token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: User not found or music effects not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    
+    put:
+      tags:
+        - User Music Effects
+      summary: Update user music effects settings
+      description: Updates music and effects settings for a user
+      operationId: updateUserMusicEffects
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          description: ID of the user to update settings for
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserMusicEffectRequest'
+      responses:
+        '200':
+          description: User music effects updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserMusicEffectResponse'
+        '400':
+          description: Bad request - validation errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - invalid or missing token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden - insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      
+  schemas:
+    UserCreationRequest:
+      type: object
+      required:
+        - username
+        - email
+        - password
+      properties:
+        username:
+          type: string
+          description: Username for the new account
+          example: johndoe
+          minLength: 3
+          maxLength: 50
+        email:
+          type: string
+          format: email
+          description: Email address
+          example: john.doe@example.com
+        password:
+          type: string
+          description: Password for the account
+          example: securePassword123
+          minLength: 6
+          maxLength: 128
+        fullName:
+          type: string
+          description: User's full name
+          example: John Doe
+        lastName:
+          type: string
+          description: User's last name
+          example: Doe
+        country:
+          type: string
+          description: User's country
+          example: United States
+        dateOfBirth:
+          type: string
+          description: User's date of birth in ISO format
+          example: 1990-01-01
+        age:
+          type: integer
+          description: User's age
+          example: 32
+        avatar:
+          type: string
+          description: URL to user's avatar image
+          example: https://example.com/avatars/johndoe.png
+    
+    UserUpdateRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          description: New username
+          example: johndoe_new
+        email:
+          type: string
+          format: email
+          description: New email address
+          example: john.doe.new@example.com
+        fullName:
+          type: string
+          description: New full name
+          example: Johnny Doe
+        lastName:
+          type: string
+          description: New last name
+          example: Doe
+        country:
+          type: string
+          description: New country
+          example: Canada
+        dateOfBirth:
+          type: string
+          description: New date of birth in ISO format
+          example: 1990-01-01
+        age:
+          type: integer
+          description: Updated age
+          example: 33
+        avatar:
+          type: string
+          description: New URL to user's avatar image
+          example: https://example.com/avatars/johndoe_new.png
+    
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: User ID
+          example: 1
+        username:
+          type: string
+          description: Username
+          example: johndoe
+        email:
+          type: string
+          description: Email address
+          example: john.doe@example.com
+        fullName:
+          type: string
+          description: User's full name
+          example: John Doe
+        lastName:
+          type: string
+          description: User's last name
+          example: Doe
+        country:
+          type: string
+          description: User's country
+          example: United States
+        dateOfBirth:
+          type: string
+          description: User's date of birth
+          example: 1990-01-01
+        age:
+          type: integer
+          description: User's age
+          example: 32
+        avatar:
+          type: string
+          description: URL to user's avatar
+          example: https://example.com/avatars/johndoe.png
+        createdAt:
+          type: string
+          format: date-time
+          description: Account creation timestamp
+          example: 2023-01-15T12:00:00Z
+        totalQuizs:
+          type: integer
+          description: Total quizzes created by user
+          example: 10
+        totalCollections:
+          type: integer
+          description: Total collections created by user
+          example: 3
+        totalPlays:
+          type: integer
+          description: Total times user's quizzes have been played
+          example: 150
+        totalFollowers:
+          type: integer
+          description: Total number of followers
+          example: 25
+        totalFollowees:
+          type: integer
+          description: Total number of users followed by this user
+          example: 30
+        totalPlayers:
+          type: integer
+          description: Total players of user's quizzes
+          example: 75
+    
+    UserFollowRequest:
+      type: object
+      required:
+        - followerId
+        - followeeId
+      properties:
+        followerId:
+          type: integer
+          format: int64
+          description: ID of the user who is following
+          example: 1
+        followeeId:
+          type: integer
+          format: int64
+          description: ID of the user being followed
+          example: 2
+    
+    UserFollowResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Relationship ID
+          example: 1
+        follower:
+          $ref: '#/components/schemas/UserResponse'
+        followee:
+          $ref: '#/components/schemas/UserResponse'
+        createdAt:
+          type: string
+          format: date-time
+          description: When the follow relationship was created
+          example: 2023-01-15T12:00:00Z
+    
+    UserMusicEffectRequest:
+      type: object
+      properties:
+        music:
+          type: boolean
+          description: Whether music is enabled
+          example: true
+        soundEffects:
+          type: boolean
+          description: Whether sound effects are enabled
+          example: true
+        animationEffects:
+          type: boolean
+          description: Whether animation effects are enabled
+          example: true
+        visualEffects:
+          type: boolean
+          description: Whether visual effects are enabled
+          example: true
+    
+    UserMusicEffectResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Settings ID
+          example: 1
+        userId:
+          type: integer
+          format: int64
+          description: User ID that these settings belong to
+          example: 1
+        music:
+          type: boolean
+          description: Whether music is enabled
+          example: true
+        soundEffects:
+          type: boolean
+          description: Whether sound effects are enabled
+          example: true
+        animationEffects:
+          type: boolean
+          description: Whether animation effects are enabled
+          example: true
+        visualEffects:
+          type: boolean
+          description: Whether visual effects are enabled
+          example: true
+    
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+          description: HTTP status code
+          example: 400
+        message:
+          type: string
+          description: Error message
+          example: Username already exists
+        errors:
+          type: array
+          description: Detailed validation errors
+          items:
+            type: string
+          example: ["Username must be at least 3 characters", "Email format is invalid"]
+        timestamp:
+          type: string
+          format: date-time
+          description: Error timestamp
+          example: 2023-01-15T12:00:00Z

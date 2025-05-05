@@ -1,0 +1,771 @@
+openapi: 3.0.3
+info:
+  title: Question Service API
+  description: API for managing quiz questions and options
+  version: 1.0.0
+  contact:
+    email: admin@quizapp.com
+
+servers:
+  - url: 'http://localhost:8080/api'
+    description: Local environment through API Gateway
+  - url: 'http://localhost:8083/api'
+    description: Direct access to Question service
+
+tags:
+  - name: questions
+    description: Question management operations
+  - name: options
+    description: Question options operations
+  - name: question-types
+    description: Question types operations
+
+paths:
+  /questions:
+    get:
+      tags:
+        - questions
+      summary: Get all questions
+      description: Retrieve a list of all questions with optional filtering
+      operationId: getAllQuestions
+      parameters:
+        - name: quizId
+          in: query
+          description: Quiz ID to filter by
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: typeId
+          in: query
+          description: Question type ID to filter by
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+        - name: size
+          in: query
+          description: Number of items per page
+          required: false
+          schema:
+            type: integer
+            default: 10
+            minimum: 1
+            maximum: 100
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Question'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      tags:
+        - questions
+      summary: Create new question
+      description: Create a new question
+      operationId: createQuestion
+      requestBody:
+        description: Question creation details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuestionDTO'
+      responses:
+        '201':
+          description: Question created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Question'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+                
+  /questions/{id}:
+    get:
+      tags:
+        - questions
+      summary: Get question by ID
+      description: Retrieve question information by ID
+      operationId: getQuestionById
+      parameters:
+        - name: id
+          in: path
+          description: Question ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Question'
+        '404':
+          description: Question not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+                
+    put:
+      tags:
+        - questions
+      summary: Update question
+      description: Update question information
+      operationId: updateQuestion
+      parameters:
+        - name: id
+          in: path
+          description: Question ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Question update details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuestionDTO'
+      responses:
+        '200':
+          description: Question updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Question'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Question not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+                
+    delete:
+      tags:
+        - questions
+      summary: Delete question
+      description: Delete question by ID
+      operationId: deleteQuestion
+      parameters:
+        - name: id
+          in: path
+          description: Question ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Question deleted successfully
+        '404':
+          description: Question not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+                
+  /questions/quiz/{quizId}:
+    get:
+      tags:
+        - questions
+      summary: Get questions by quiz ID
+      description: Retrieve all questions for a specific quiz
+      operationId: getQuestionsByQuizId
+      parameters:
+        - name: quizId
+          in: path
+          description: Quiz ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Question'
+        '404':
+          description: Quiz not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+                
+  /questions/search:
+    get:
+      tags:
+        - questions
+      summary: Search questions
+      description: Search for questions by content
+      operationId: searchQuestions
+      parameters:
+        - name: query
+          in: query
+          description: Search query string
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+        - name: size
+          in: query
+          description: Number of items per page
+          required: false
+          schema:
+            type: integer
+            default: 10
+            minimum: 1
+            maximum: 100
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Question'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+                
+  /options:
+    post:
+      tags:
+        - options
+      summary: Create new option
+      description: Create a new question option
+      operationId: createOption
+      requestBody:
+        description: Option creation details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OptionDTO'
+      responses:
+        '201':
+          description: Option created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Option'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+                
+  /options/{id}:
+    put:
+      tags:
+        - options
+      summary: Update option
+      description: Update option information
+      operationId: updateOption
+      parameters:
+        - name: id
+          in: path
+          description: Option ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Option update details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OptionDTO'
+      responses:
+        '200':
+          description: Option updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Option'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Option not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+                
+    delete:
+      tags:
+        - options
+      summary: Delete option
+      description: Delete option by ID
+      operationId: deleteOption
+      parameters:
+        - name: id
+          in: path
+          description: Option ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Option deleted successfully
+        '404':
+          description: Option not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+                
+  /options/question/{questionId}:
+    get:
+      tags:
+        - options
+      summary: Get options by question ID
+      description: Retrieve all options for a specific question
+      operationId: getOptionsByQuestionId
+      parameters:
+        - name: questionId
+          in: path
+          description: Question ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Option'
+        '404':
+          description: Question not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+                
+  /question-types:
+    get:
+      tags:
+        - question-types
+      summary: Get all question types
+      description: Retrieve a list of all question types
+      operationId: getAllQuestionTypes
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/QuestionType'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      tags:
+        - question-types
+      summary: Create new question type
+      description: Create a new question type
+      operationId: createQuestionType
+      requestBody:
+        description: Question type creation details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuestionTypeDTO'
+      responses:
+        '201':
+          description: Question type created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuestionType'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+                
+components:
+  schemas:
+    Question:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Question ID
+          example: 1
+        content:
+          type: string
+          description: Question content
+          example: "What is the capital of France?"
+        points:
+          type: integer
+          description: Points awarded for correct answer
+          example: 10
+        timeLimit:
+          type: integer
+          description: Time limit in seconds
+          example: 30
+        quizId:
+          type: integer
+          format: int64
+          description: Quiz ID this question belongs to
+          example: 5
+        typeId:
+          type: integer
+          format: int64
+          description: Question type ID
+          example: 1
+        questionType:
+          $ref: '#/components/schemas/QuestionType'
+        options:
+          type: array
+          items:
+            $ref: '#/components/schemas/Option'
+          description: Answer options for this question
+        mediaUrl:
+          type: string
+          description: URL to associated media (image, audio, video)
+          example: "https://example.com/images/paris.jpg"
+        hint:
+          type: string
+          description: Hint for the question
+          example: "It's known as the City of Light."
+        explanation:
+          type: string
+          description: Explanation for the correct answer
+          example: "Paris is the capital and most populous city of France."
+        orderInQuiz:
+          type: integer
+          description: Order of this question in the quiz
+          example: 3
+        
+    QuestionDTO:
+      type: object
+      required:
+        - content
+        - quizId
+        - typeId
+      properties:
+        content:
+          type: string
+          description: Question content
+          example: "What is the capital of France?"
+        points:
+          type: integer
+          description: Points awarded for correct answer
+          example: 10
+        timeLimit:
+          type: integer
+          description: Time limit in seconds
+          example: 30
+        quizId:
+          type: integer
+          format: int64
+          description: Quiz ID this question belongs to
+          example: 5
+        typeId:
+          type: integer
+          format: int64
+          description: Question type ID
+          example: 1
+        mediaUrl:
+          type: string
+          description: URL to associated media (image, audio, video)
+          example: "https://example.com/images/paris.jpg"
+        hint:
+          type: string
+          description: Hint for the question
+          example: "It's known as the City of Light."
+        explanation:
+          type: string
+          description: Explanation for the correct answer
+          example: "Paris is the capital and most populous city of France."
+        orderInQuiz:
+          type: integer
+          description: Order of this question in the quiz
+          example: 3
+        options:
+          type: array
+          items:
+            $ref: '#/components/schemas/OptionDTO'
+          description: Answer options for this question
+          
+    Option:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Option ID
+          example: 1
+        content:
+          type: string
+          description: Option content
+          example: "Paris"
+        isCorrect:
+          type: boolean
+          description: Whether this option is correct
+          example: true
+        questionId:
+          type: integer
+          format: int64
+          description: Question ID this option belongs to
+          example: 1
+        mediaUrl:
+          type: string
+          description: URL to associated media (image, audio)
+          example: "https://example.com/images/paris_option.jpg"
+        orderInQuestion:
+          type: integer
+          description: Order of this option in the question
+          example: 1
+          
+    OptionDTO:
+      type: object
+      required:
+        - content
+        - isCorrect
+      properties:
+        content:
+          type: string
+          description: Option content
+          example: "Paris"
+        isCorrect:
+          type: boolean
+          description: Whether this option is correct
+          example: true
+        questionId:
+          type: integer
+          format: int64
+          description: Question ID this option belongs to
+          example: 1
+        mediaUrl:
+          type: string
+          description: URL to associated media (image, audio)
+          example: "https://example.com/images/paris_option.jpg"
+        orderInQuestion:
+          type: integer
+          description: Order of this option in the question
+          example: 1
+          
+    QuestionType:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Question type ID
+          example: 1
+        name:
+          type: string
+          description: Question type name
+          example: "Multiple Choice"
+        description:
+          type: string
+          description: Question type description
+          example: "Select one correct answer from multiple options"
+        allowsMultipleCorrectAnswers:
+          type: boolean
+          description: Whether this type allows multiple correct answers
+          example: false
+        requiresTextInput:
+          type: boolean
+          description: Whether this type requires text input
+          example: false
+          
+    QuestionTypeDTO:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: Question type name
+          example: "Multiple Choice"
+        description:
+          type: string
+          description: Question type description
+          example: "Select one correct answer from multiple options"
+        allowsMultipleCorrectAnswers:
+          type: boolean
+          description: Whether this type allows multiple correct answers
+          example: false
+        requiresTextInput:
+          type: boolean
+          description: Whether this type requires text input
+          example: false
+    
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+          description: HTTP status code
+          example: 400
+        message:
+          type: string
+          description: Error message
+          example: "Invalid input"
+        timestamp:
+          type: string
+          format: date-time
+          description: Time when the error occurred
+          example: 2023-05-04T12:00:00Z
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearerAuth: []
