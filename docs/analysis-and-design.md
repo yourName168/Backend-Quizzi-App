@@ -1,159 +1,220 @@
-# Phân Tích và Thiết Kế Hệ Thống Quiz Application
+# 📊 Quiz Application Microservices - Analysis and Design
 
-## 1. Tổng Quan Hệ Thống
+This document outlines the **analysis** and **design** process for the Quiz Application microservices-based system. It explains the architecture decisions and system components.
 
-### 1.1. Mục Đích
-Hệ thống Quiz Application được thiết kế để cung cấp một nền tảng trắc nghiệm trực tuyến toàn diện, cho phép người dùng tạo, tham gia và quản lý các bài trắc nghiệm trong nhiều lĩnh vực khác nhau. Nền tảng này hỗ trợ các tính năng tương tác xã hội, theo dõi tiến độ, và phân tích kết quả.
+---
 
-### 1.2. Phạm Vi
-* Xác thực và phân quyền người dùng
-* Quản lý thông tin cá nhân và profile người dùng
-* Tạo và quản lý bài trắc nghiệm
-* Tạo và quản lý câu hỏi
-* Theo dõi quá trình chơi và tương tác của người dùng
-* Xây dựng bộ sưu tập trắc nghiệm
-* Tương tác xã hội giữa người dùng
+## 1. 🎯 Problem Statement
 
-### 1.3. Đối Tượng Sử Dụng
-* Học sinh, sinh viên: Tham gia các bài trắc nghiệm để ôn tập, kiểm tra kiến thức
-* Giáo viên, giảng viên: Tạo bài trắc nghiệm để kiểm tra đánh giá học sinh
-* Người dùng phổ thông: Tham gia các bài trắc nghiệm giải trí, học hỏi kiến thức
+The Quiz Application is an interactive platform designed to create, manage, and participate in quiz games.
 
-## 2. Kiến Trúc Hệ Thống
+- **Who are the users?**
+  - Students seeking to test their knowledge
+  - Teachers/educators creating quiz content
+  - Administrators managing the platform
+  - Casual users playing quiz games for entertainment
 
-### 2.1. Kiến Trúc Tổng Quát
+- **What are the main goals?**
+  - Allow users to create and customize quizzes with various question types
+  - Provide an interactive real-time quiz gameplay experience
+  - Track user performance and progress
+  - Support different quiz formats and question types
+  - Ensure scalability and reliability of the platform
 
-Hệ thống được xây dựng theo kiến trúc microservices với các thành phần chính:
+- **What kind of data is processed?**
+  - User account information and profiles
+  - Quiz content including questions and answers
+  - Gameplay statistics and user performance data
+  - User relationships (follows, shares)
 
-* **API Gateway**: Điểm vào duy nhất của hệ thống, định tuyến request tới các service
-* **Eureka Server**: Service discovery, đăng ký và quản lý các service
-* **Identity Service**: Xác thực, phân quyền, quản lý token JWT
-* **User Service**: Quản lý thông tin người dùng, profile và mối quan hệ
-* **Quiz Service**: Quản lý bài trắc nghiệm và bộ sưu tập
-* **Question Service**: Quản lý câu hỏi và loại câu hỏi
-* **Gameplay Service**: Theo dõi quá trình chơi và tương tác
+---
 
-### 2.2. Mô Hình Dữ Liệu
+## 2. 🧩 Identified Microservices
 
-#### Identity Service
-* Không lưu trữ dữ liệu người dùng (stateless), sử dụng User Service để xác thực
-* Tạo và quản lý JWT token
+| Service Name      | Responsibility                                              | Tech Stack             |
+|-------------------|------------------------------------------------------------|-----------------------|
+| User Service      | Manages user profiles, relationships, and preferences       | Spring Boot, MySQL    |
+| Quiz Service      | Handles quiz creation, collections, and metadata            | Spring Boot, MySQL    |
+| Question Service  | Manages various question types and their content            | Spring Boot, MySQL    |
+| Gameplay Service  | Tracks quiz game sessions, participants, and results        | Spring Boot, MySQL    |
+| Identity Service  | Handles authentication, authorization, and security         | Spring Boot, JWT      |
+| Eureka Server     | Service discovery and registration                          | Spring Cloud Netflix  |
+| API Gateway       | Routes requests and acts as entry point to the system       | Spring Cloud Gateway  |
 
-#### User Service
-* Users: Thông tin cá nhân người dùng
-* User Profiles: Thông tin mở rộng của người dùng
-* User Follows: Mối quan hệ theo dõi giữa người dùng
-* User Settings: Cấu hình và tùy chọn của người dùng
-* User Music Effects: Cấu hình hiệu ứng âm nhạc
+---
 
-#### Quiz Service
-* Quizzes: Thông tin chính của bài trắc nghiệm
-* Quiz Collections: Bộ sưu tập các bài trắc nghiệm
-* Quiz Games: Thông tin trò chơi trắc nghiệm
-* Quiz Tags: Thẻ gắn với bài trắc nghiệm
-* Quiz Categories: Phân loại bài trắc nghiệm
+## 3. 🔄 Service Communication
 
-#### Question Service
-* Questions: Thông tin chính của câu hỏi
-* Question Types: Loại câu hỏi
-* Options: Các lựa chọn cho câu hỏi
-* Correct Answers: Đáp án đúng
-* Question Tags: Thẻ của câu hỏi
+Services communicate primarily through REST APIs with the following patterns:
 
-#### Gameplay Service
-* Quiz Game Tracking: Theo dõi tiến trình chơi
-* Question Tracking: Theo dõi câu trả lời
-* Participants: Thông tin người tham gia
-* Game Results: Kết quả trò chơi
-* Game Analytics: Phân tích dữ liệu chơi
+- **API Gateway ⇄ All Services**: Gateway routes external requests to appropriate services (REST)
+- **Identity Service ⇄ All Services**: For authentication and user verification (JWT token)
+- **Service-to-Service Communication**: Direct REST calls through Feign Clients:
+  - Quiz Service ⇄ User Service: To validate quiz creators
+  - Question Service ⇄ Quiz Service: To verify quiz existence when creating questions
+  - Gameplay Service ⇄ Quiz Service: To retrieve quiz data for gameplay sessions
+  - Gameplay Service ⇄ User Service: To verify participants
+  - Gameplay Service ⇄ Question Service: To retrieve questions during gameplay
 
-### 2.3. Luồng Xử Lý Chính
+All services register with Eureka Server for service discovery, allowing dynamic scaling and failover.
 
-#### Đăng Ký và Đăng Nhập
-1. Người dùng gửi thông tin đăng ký/đăng nhập đến API Gateway
-2. API Gateway chuyển tiếp đến Identity Service
-3. Identity Service xác thực thông tin với User Service
-4. Identity Service tạo JWT token và trả về cho người dùng
-5. Người dùng sử dụng token trong các request tiếp theo
+---
 
-#### Tạo và Tham Gia Quiz
-1. Người dùng xác thực tạo quiz qua API Gateway
-2. Quiz Service tạo bài trắc nghiệm và liên kết với Question Service
-3. Người dùng khác có thể tìm kiếm và tham gia quiz
-4. Gameplay Service theo dõi và ghi nhận kết quả
+## 4. 🗂️ Data Design
 
-## 3. Giao Diện API
+Each service maintains its own database to ensure loose coupling:
 
-### 3.1. Identity Service API
-* `/register`: Đăng ký người dùng mới
-* `/login`: Đăng nhập và nhận JWT token
-* `/token/refresh`: Làm mới token
-* `/me`: Lấy thông tin người dùng hiện tại
+- **User Service Database**:
+  - `users`: Core user information
+  - `user_profiles`: Extended profile information
+  - `user_follows`: User relationship data
+  - `user_settings`: User preferences and settings
+  - `user_music_effects`: User audio preferences
 
-### 3.2. User Service API
-* `/api/users`: CRUD người dùng
-* `/api/user-follows`: Quản lý mối quan hệ theo dõi
-* `/api/user-music-effects`: Quản lý hiệu ứng âm nhạc
+- **Quiz Service Database**:
+  - `quizzes`: Core quiz metadata
+  - `quiz_collections`: Groups of related quizzes
+  - `quiz_games`: Live game session metadata
+  - `quiz_tags`: Categorization tags
+  - `quiz_categories`: Main quiz categories
 
-### 3.3. Quiz Service API
-* `/api/quizzes`: CRUD bài trắc nghiệm
-* `/api/quiz-collections`: Quản lý bộ sưu tập
-* `/api/quiz-games`: Quản lý trò chơi
+- **Question Service Database**:
+  - `questions`: Base question entity
+  - `question_types`: Different formats (TRUE_FALSE, CHOICE, SLIDER, etc.)
+  - Type-specific tables:
+    - `question_true_false`: Boolean questions
+    - `question_choice`: Multiple choice questions
+    - `question_slider`: Numeric range questions
+    - `question_puzzle`: Puzzle-based questions
+    - `question_text`: Free text response questions
 
-### 3.4. Question Service API
-* `/api/questions`: CRUD câu hỏi
-* `/api/question-types`: Quản lý loại câu hỏi
-* `/api/questions/search`: Tìm kiếm câu hỏi
+- **Gameplay Service Database**:
+  - `quiz_game_tracking`: Session progress and statistics
+  - `participants`: Users participating in game sessions
+  - `question_tracking`: Records of user responses to questions
+  - `game_results`: Final outcome data
+  - `game_analytics`: Performance metrics
 
-### 3.5. Gameplay Service API
-* `/api/quiz-game-tracking`: Theo dõi tiến trình
-* `/api/question-tracking`: Ghi nhận câu trả lời
-* `/api/participants`: Quản lý người tham gia
+---
 
-## 4. Bảo Mật
+## 5. 🔐 Security Considerations
 
-### 4.1. Xác Thực và Ủy Quyền
-* Sử dụng JWT (JSON Web Token) cho xác thực
-* API Gateway xác thực token trước khi chuyển tiếp request
-* Role-based access control (RBAC) cho phân quyền
+- **JWT Authentication**: Secure token-based authentication system
+  - Tokens issued by Identity Service upon login
+  - Tokens validated by API Gateway before forwarding requests
+  - Service-to-service calls include authentication headers
 
-### 4.2. Bảo Mật Dữ Liệu
-* Mã hóa mật khẩu với BCrypt
-* HTTPS cho tất cả các kết nối
-* Validation dữ liệu đầu vào
-* Kiểm soát truy cập dựa trên quyền sở hữu
+- **Role-Based Access Control**:
+  - User roles (USER, ADMIN) determine permitted actions
+  - Admin-only endpoints protected with `@PreAuthorize` annotations
 
-## 5. Khả Năng Mở Rộng
+- **Input Validation**:
+  - Request validation on both client and server sides
+  - DTO pattern used to filter and validate incoming data
 
-### 5.1. Chiến Lược Mở Rộng
-* Containerization với Docker
-* Horizontal scaling cho các service
-* Cân bằng tải thông qua API Gateway và Eureka
+- **Secure Communication**:
+  - HTTPS for all external API communications
+  - Internal service calls secured within Docker network
 
-### 5.2. Khả Năng Chịu Lỗi
-* Circuit breaker pattern
-* Retry mechanism
-* Service discovery với Eureka
-* Distributed logging và monitoring
+- **Error Handling**:
+  - Custom exception handlers prevent leaking sensitive information
+  - Standardized error responses across services
 
-## 6. Kế Hoạch Triển Khai
+---
 
-### 6.1. Môi Trường
-* Development: Máy phát triển cục bộ
-* Staging: Môi trường kiểm thử tích hợp
-* Production: Môi trường triển khai chính thức
+## 6. 📦 Deployment Plan
 
-### 6.2. CI/CD Pipeline
-* Automated testing
-* Continuous integration với GitHub Actions
-* Continuous deployment với Docker và Kubernetes
+- **Containerization with Docker**:
+  - Each service has its own Dockerfile
+  - MySQL database containerized with initialization scripts
+  - Environment variables for service configuration
 
-### 6.3. Monitoring và Logging
-* Distributed tracing
-* Centralized logging
-* Performance monitoring
-* Alerting system
+- **Container Orchestration**:
+  - Docker Compose for local development environment
+  - Services configured to start in proper order with health checks
+  - Scalable for production using Kubernetes (future)
 
-## 7. Kết Luận
+- **Configuration Management**:
+  - External configuration via application.properties
+  - Environment-specific settings through Docker environment variables
+  - Consistent port assignments across environments
 
-Hệ thống Quiz Application được thiết kế với kiến trúc microservices hiện đại, cho phép mở rộng và bảo trì dễ dàng. Mỗi service có trách nhiệm rõ ràng và có thể được phát triển, triển khai, và mở rộng độc lập. Hệ thống cung cấp trải nghiệm người dùng tốt, khả năng mở rộng cao, và tính bảo mật mạnh mẽ.
+- **CI/CD Pipeline**:
+  - Automated build and test processes
+  - Integration tests for service interactions
+  - Service versioning for compatibility
+
+---
+
+## 7. 🎨 Architecture Diagram
+
+```
++-------------+                 +----------------+
+|             |                 |                |
+|   Clients   |---------------->|  API Gateway   |
+| (Web/Mobile)|                 |   (Port 8080)  |
+|             |<----------------|                |
++-------------+                 +----------------+
+                                        |
+                                        v
+                               +-----------------+
+                               |                 |
+                               | Eureka Server   |
+                               |  (Port 8761)    |
+                               |                 |
+                               +-----------------+
+                                        |
+            +---------------------------|---------------------------+
+            |                           |                           |
+            v                           v                           v
+   +----------------+          +----------------+          +----------------+
+   |                |          |                |          |                |
+   | Identity Service|<-------->| User Service   |<-------->| Quiz Service   |
+   |  (Port 8085)   |          |  (Port 8081)   |          |  (Port 8082)   |
+   |                |          |                |          |                |
+   +----------------+          +----------------+          +----------------+
+            ^                           ^                           ^
+            |                           |                           |
+            |                           v                           v
+            |                  +----------------+          +----------------+
+            |                  |                |          |                |
+            +----------------->| Question Service|<-------->| Gameplay Service|
+                               |  (Port 8083)   |          |  (Port 8084)   |
+                               |                |          |                |
+                               +----------------+          +----------------+
+                                        ^                           ^
+                                        |                           |
+                                        v                           v
+                                  +-----------------------------+
+                                  |                             |
+                                  |      MySQL Databases        |
+                                  |                             |
+                                  +-----------------------------+
+```
+
+---
+
+## ✅ Summary
+
+The microservices architecture for the Quiz Application provides several advantages:
+
+1. **Independent Development & Deployment**: Each service can be developed, tested, and deployed independently, allowing for faster feature delivery and team autonomy.
+
+2. **Scalability**: Services can be scaled individually based on demand (e.g., Gameplay Service during peak usage, Question Service for content-heavy operations).
+
+3. **Technology Flexibility**: While currently standardized on Spring Boot, each service could potentially use different technologies if needed for specific requirements.
+
+4. **Resilience**: Failure in one service does not bring down the entire system, and services can be designed with fallback mechanisms.
+
+5. **Maintainability**: Smaller, focused codebases are easier to understand and maintain compared to a monolithic application.
+
+6. **Performance Optimization**: Resources can be allocated based on specific service needs rather than scaling the entire application.
+
+The architecture supports the requirements of an interactive quiz platform while providing a foundation for future growth and feature expansion.
+
+## Author
+
+- Team 3
+
+
+Implementation adapted for Quiz Application Microservices.
