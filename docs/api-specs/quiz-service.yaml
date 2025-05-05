@@ -11,6 +11,10 @@ servers:
     description: Local environment through API Gateway
   - url: 'http://localhost:8082/api'
     description: Direct access to Quiz service
+  - url: 'http://quiz-service:8082/api'
+    description: Internal Docker network URL for service-to-service communication
+  - url: 'http://quiz-service:8082'
+    description: Internal Docker network base URL
 
 tags:
   - name: quizzes

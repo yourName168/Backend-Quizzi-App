@@ -11,6 +11,10 @@ servers:
     description: API Gateway URL for Identity Service in local development
   - url: https://quiz-app.example.com/api/auth
     description: Production API Gateway URL
+  - url: http://identity-service:8085/api/auth
+    description: Internal Docker network URL for service-to-service communication
+  - url: http://identity-service:8085
+    description: Internal Docker network base URL
 
 tags:
   - name: Authentication

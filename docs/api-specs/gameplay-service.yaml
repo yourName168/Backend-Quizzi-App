@@ -1,0 +1,1291 @@
+openapi: 3.0.3
+info:
+  title: Gameplay Service API
+  description: API for managing quiz gameplay, sessions, and results
+  version: 1.0.0
+  contact:
+    email: admin@quizapp.com
+
+servers:
+  - url: 'http://localhost:8080/api'
+    description: Local environment through API Gateway
+  - url: 'http://localhost:8084/api'
+    description: Direct access to Gameplay service
+  - url: 'http://gameplay-service:8084/api'
+    description: Internal Docker network URL for service-to-service communication
+  - url: 'http://gameplay-service:8084'
+    description: Internal Docker network base URL
+
+tags:
+  - name: quiz-sessions
+    description: Quiz gameplay session operations
+  - name: participants
+    description: Quiz participant management operations
+  - name: question-tracking
+    description: Track player responses to questions
+  - name: leaderboards
+    description: Quiz leaderboard operations
+  - name: statistics
+    description: Quiz gameplay statistics operations
+
+paths:
+  /quiz-sessions:
+    get:
+      tags:
+        - quiz-sessions
+      summary: Get all quiz sessions
+      description: Retrieve a list of all quiz sessions with optional filtering
+      operationId: getAllQuizSessions
+      parameters:
+        - name: userId
+          in: query
+          description: User ID to filter by (host or participant)
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: quizId
+          in: query
+          description: Quiz ID to filter by
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: status
+          in: query
+          description: Session status to filter by
+          required: false
+          schema:
+            type: string
+            enum: [WAITING, ACTIVE, FINISHED, CANCELLED]
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+        - name: size
+          in: query
+          description: Number of items per page
+          required: false
+          schema:
+            type: integer
+            default: 10
+            minimum: 1
+            maximum: 100
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/QuizSession'
+                  totalElements:
+                    type: integer
+                  totalPages:
+                    type: integer
+                  size:
+                    type: integer
+                  number:
+                    type: integer
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    
+    post:
+      tags:
+        - quiz-sessions
+      summary: Create new quiz session
+      description: Create a new quiz gameplay session
+      operationId: createQuizSession
+      requestBody:
+        description: Quiz session creation details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuizSessionDTO'
+      responses:
+        '201':
+          description: Quiz session created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizSession'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /quiz-sessions/{id}:
+    get:
+      tags:
+        - quiz-sessions
+      summary: Get quiz session by ID
+      description: Retrieve a specific quiz session by ID
+      operationId: getQuizSessionById
+      parameters:
+        - name: id
+          in: path
+          description: Quiz session ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizSession'
+        '404':
+          description: Session not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    
+    put:
+      tags:
+        - quiz-sessions
+      summary: Update quiz session
+      description: Update quiz session information
+      operationId: updateQuizSession
+      parameters:
+        - name: id
+          in: path
+          description: Quiz session ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Quiz session update details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuizSessionUpdateDTO'
+      responses:
+        '200':
+          description: Quiz session updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizSession'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Session not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /quiz-sessions/{id}/start:
+    post:
+      tags:
+        - quiz-sessions
+      summary: Start quiz session
+      description: Start a quiz session that is in WAITING status
+      operationId: startQuizSession
+      parameters:
+        - name: id
+          in: path
+          description: Quiz session ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Quiz session started successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizSession'
+        '400':
+          description: Session cannot be started (e.g., wrong status)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - only the host can start the session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Session not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /quiz-sessions/{id}/end:
+    post:
+      tags:
+        - quiz-sessions
+      summary: End quiz session
+      description: End a quiz session that is in ACTIVE status
+      operationId: endQuizSession
+      parameters:
+        - name: id
+          in: path
+          description: Quiz session ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Quiz session ended successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizSession'
+        '400':
+          description: Session cannot be ended (e.g., wrong status)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - only the host can end the session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Session not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /quiz-sessions/{id}/cancel:
+    post:
+      tags:
+        - quiz-sessions
+      summary: Cancel quiz session
+      description: Cancel a quiz session
+      operationId: cancelQuizSession
+      parameters:
+        - name: id
+          in: path
+          description: Quiz session ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Quiz session cancelled successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizSession'
+        '401':
+          description: Unauthorized - only the host can cancel the session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Session not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /quiz-sessions/{id}/next-question:
+    post:
+      tags:
+        - quiz-sessions
+      summary: Move to next question
+      description: Advance to the next question in an active quiz session
+      operationId: nextQuestion
+      parameters:
+        - name: id
+          in: path
+          description: Quiz session ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Moved to next question successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CurrentQuestionResponse'
+        '400':
+          description: Cannot advance to next question (e.g., last question reached)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - only the host can advance questions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Session not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /participants:
+    post:
+      tags:
+        - participants
+      summary: Join a quiz session
+      description: Add a participant to a quiz session
+      operationId: joinQuizSession
+      requestBody:
+        description: Session join details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ParticipantJoinDTO'
+      responses:
+        '201':
+          description: Successfully joined the quiz session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Participant'
+        '400':
+          description: Invalid input or session not joinable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Session not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /participants/{id}/leave:
+    post:
+      tags:
+        - participants
+      summary: Leave a quiz session
+      description: Remove a participant from a quiz session
+      operationId: leaveQuizSession
+      parameters:
+        - name: id
+          in: path
+          description: Participant ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successfully left the quiz session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Participant'
+        '404':
+          description: Participant not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /quiz-sessions/{sessionId}/participants:
+    get:
+      tags:
+        - participants
+      summary: Get session participants
+      description: Retrieve all participants in a quiz session
+      operationId: getSessionParticipants
+      parameters:
+        - name: sessionId
+          in: path
+          description: Quiz session ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successfully retrieved participants
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participant'
+        '404':
+          description: Session not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /question-tracking:
+    post:
+      tags:
+        - question-tracking
+      summary: Submit answer
+      description: Submit participant answer for a question
+      operationId: submitAnswer
+      requestBody:
+        description: Answer submission details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnswerSubmissionDTO'
+      responses:
+        '201':
+          description: Answer submitted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuestionTrackingResponse'
+        '400':
+          description: Invalid input or question not active
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Session or question not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /question-tracking/session/{sessionId}/question/{questionId}:
+    get:
+      tags:
+        - question-tracking
+      summary: Get question results
+      description: Get results for a specific question in a session
+      operationId: getQuestionResults
+      parameters:
+        - name: sessionId
+          in: path
+          description: Quiz session ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: questionId
+          in: path
+          description: Question ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Question results retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuestionResultsResponse'
+        '404':
+          description: Session or question not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /leaderboards/session/{sessionId}:
+    get:
+      tags:
+        - leaderboards
+      summary: Get session leaderboard
+      description: Get real-time leaderboard for an active quiz session
+      operationId: getSessionLeaderboard
+      parameters:
+        - name: sessionId
+          in: path
+          description: Quiz session ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Leaderboard retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LeaderboardEntry'
+        '404':
+          description: Session not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /statistics/quiz/{quizId}:
+    get:
+      tags:
+        - statistics
+      summary: Get quiz statistics
+      description: Get aggregate statistics for a quiz across all sessions
+      operationId: getQuizStatistics
+      parameters:
+        - name: quizId
+          in: path
+          description: Quiz ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Statistics retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizStatistics'
+        '404':
+          description: Quiz not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /statistics/user/{userId}:
+    get:
+      tags:
+        - statistics
+      summary: Get user statistics
+      description: Get gameplay statistics for a specific user
+      operationId: getUserStatistics
+      parameters:
+        - name: userId
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Statistics retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserStatistics'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    QuizSession:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Session ID
+          example: 1
+        quizId:
+          type: integer
+          format: int64
+          description: Quiz ID
+          example: 5
+        hostId:
+          type: integer
+          format: int64
+          description: User ID of the session host
+          example: 101
+        title:
+          type: string
+          description: Session title
+          example: "Friday Night Trivia"
+        accessCode:
+          type: string
+          description: Unique code to join the session
+          example: "ABC123"
+        status:
+          type: string
+          description: Session status
+          enum: [WAITING, ACTIVE, FINISHED, CANCELLED]
+          example: "ACTIVE"
+        startTime:
+          type: string
+          format: date-time
+          description: Session start time
+          example: "2023-05-01T19:00:00Z"
+        endTime:
+          type: string
+          format: date-time
+          description: Session end time
+          example: "2023-05-01T20:15:00Z"
+        isPublic:
+          type: boolean
+          description: Whether the session is public or private
+          example: true
+        maxParticipants:
+          type: integer
+          description: Maximum number of participants allowed
+          example: 50
+        currentParticipants:
+          type: integer
+          description: Current number of participants
+          example: 23
+        currentQuestionId:
+          type: integer
+          format: int64
+          description: Currently active question ID
+          example: 42
+        currentQuestionIndex:
+          type: integer
+          description: Current question index (0-based)
+          example: 3
+        totalQuestions:
+          type: integer
+          description: Total number of questions in the quiz
+          example: 10
+
+    QuizSessionDTO:
+      type: object
+      required:
+        - quizId
+        - hostId
+      properties:
+        quizId:
+          type: integer
+          format: int64
+          description: Quiz ID
+          example: 5
+        hostId:
+          type: integer
+          format: int64
+          description: User ID of the session host
+          example: 101
+        title:
+          type: string
+          description: Session title
+          example: "Friday Night Trivia"
+        isPublic:
+          type: boolean
+          description: Whether the session is public or private
+          example: true
+        maxParticipants:
+          type: integer
+          description: Maximum number of participants allowed
+          example: 50
+
+    QuizSessionUpdateDTO:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Session title
+          example: "Updated Friday Night Trivia"
+        isPublic:
+          type: boolean
+          description: Whether the session is public or private
+          example: true
+        maxParticipants:
+          type: integer
+          description: Maximum number of participants allowed
+          example: 100
+
+    Participant:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Participant ID
+          example: 1
+        userId:
+          type: integer
+          format: int64
+          description: User ID of the participant
+          example: 201
+        sessionId:
+          type: integer
+          format: int64
+          description: Session ID
+          example: 1
+        displayName:
+          type: string
+          description: Display name for the participant
+          example: "QuizMaster42"
+        joinTime:
+          type: string
+          format: date-time
+          description: Time when participant joined
+          example: "2023-05-01T19:05:00Z"
+        leaveTime:
+          type: string
+          format: date-time
+          description: Time when participant left
+          example: "2023-05-01T20:15:00Z"
+        isActive:
+          type: boolean
+          description: Whether participant is still active in the session
+          example: true
+        currentScore:
+          type: integer
+          description: Current score in the session
+          example: 750
+        rank:
+          type: integer
+          description: Current rank in the session leaderboard
+          example: 3
+
+    ParticipantJoinDTO:
+      type: object
+      required:
+        - sessionId
+        - userId
+      properties:
+        sessionId:
+          type: integer
+          format: int64
+          description: Session ID to join
+          example: 1
+        userId:
+          type: integer
+          format: int64
+          description: User ID of the participant
+          example: 201
+        accessCode:
+          type: string
+          description: Access code for private sessions
+          example: "ABC123"
+        displayName:
+          type: string
+          description: Custom display name for the session
+          example: "QuizMaster42"
+
+    AnswerSubmissionDTO:
+      type: object
+      required:
+        - sessionId
+        - questionId
+        - participantId
+      properties:
+        sessionId:
+          type: integer
+          format: int64
+          description: Session ID
+          example: 1
+        questionId:
+          type: integer
+          format: int64
+          description: Question ID
+          example: 42
+        participantId:
+          type: integer
+          format: int64
+          description: Participant ID
+          example: 1
+        selectedOptionIds:
+          type: array
+          description: IDs of selected answer options
+          items:
+            type: integer
+            format: int64
+          example: [3, 5]
+        textAnswer:
+          type: string
+          description: Text answer for open questions
+          example: "Paris"
+        answerTime:
+          type: integer
+          description: Time taken to answer in milliseconds
+          example: 5230
+
+    QuestionTrackingResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Question tracking ID
+          example: 1
+        sessionId:
+          type: integer
+          format: int64
+          description: Session ID
+          example: 1
+        questionId:
+          type: integer
+          format: int64
+          description: Question ID
+          example: 42
+        participantId:
+          type: integer
+          format: int64
+          description: Participant ID
+          example: 1
+        isCorrect:
+          type: boolean
+          description: Whether the answer is correct
+          example: true
+        pointsEarned:
+          type: integer
+          description: Points earned for this question
+          example: 100
+        answerTime:
+          type: integer
+          description: Time taken to answer in milliseconds
+          example: 5230
+        submittedAt:
+          type: string
+          format: date-time
+          description: When the answer was submitted
+          example: "2023-05-01T19:12:34Z"
+
+    CurrentQuestionResponse:
+      type: object
+      properties:
+        sessionId:
+          type: integer
+          format: int64
+          description: Session ID
+          example: 1
+        questionId:
+          type: integer
+          format: int64
+          description: Current question ID
+          example: 42
+        questionIndex:
+          type: integer
+          description: Current question index (0-based)
+          example: 3
+        content:
+          type: string
+          description: Question content
+          example: "What is the capital of France?"
+        timeLimit:
+          type: integer
+          description: Time limit in seconds
+          example: 30
+        options:
+          type: array
+          description: Answer options
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                format: int64
+                example: 3
+              content:
+                type: string
+                example: "Paris"
+        mediaUrl:
+          type: string
+          description: URL to associated media
+          example: "https://example.com/images/paris.jpg"
+        questionType:
+          type: object
+          properties:
+            id:
+              type: integer
+              format: int64
+              example: 1
+            name:
+              type: string
+              example: "Multiple Choice"
+            allowsMultipleCorrectAnswers:
+              type: boolean
+              example: false
+
+    QuestionResultsResponse:
+      type: object
+      properties:
+        questionId:
+          type: integer
+          format: int64
+          description: Question ID
+          example: 42
+        sessionId:
+          type: integer
+          format: int64
+          description: Session ID
+          example: 1
+        totalResponses:
+          type: integer
+          description: Total number of responses
+          example: 23
+        correctResponses:
+          type: integer
+          description: Number of correct responses
+          example: 18
+        averageResponseTime:
+          type: integer
+          description: Average response time in milliseconds
+          example: 6430
+        optionDistribution:
+          type: array
+          description: Distribution of answers by option
+          items:
+            type: object
+            properties:
+              optionId:
+                type: integer
+                format: int64
+                example: 3
+              content:
+                type: string
+                example: "Paris"
+              count:
+                type: integer
+                example: 18
+              percentage:
+                type: number
+                format: float
+                example: 78.3
+              isCorrect:
+                type: boolean
+                example: true
+        fastestResponse:
+          type: object
+          properties:
+            participantId:
+              type: integer
+              format: int64
+              example: 5
+            displayName:
+              type: string
+              example: "SpeedyQuizzer"
+            time:
+              type: integer
+              example: 1852
+
+    LeaderboardEntry:
+      type: object
+      properties:
+        participantId:
+          type: integer
+          format: int64
+          description: Participant ID
+          example: 1
+        userId:
+          type: integer
+          format: int64
+          description: User ID
+          example: 201
+        displayName:
+          type: string
+          description: Display name
+          example: "QuizMaster42"
+        score:
+          type: integer
+          description: Total score
+          example: 750
+        rank:
+          type: integer
+          description: Current rank
+          example: 3
+        correctAnswers:
+          type: integer
+          description: Number of correct answers
+          example: 8
+        totalAnswers:
+          type: integer
+          description: Total number of questions answered
+          example: 10
+        averageResponseTime:
+          type: integer
+          description: Average response time in milliseconds
+          example: 4320
+
+    QuizStatistics:
+      type: object
+      properties:
+        quizId:
+          type: integer
+          format: int64
+          description: Quiz ID
+          example: 5
+        totalSessions:
+          type: integer
+          description: Total number of sessions
+          example: 42
+        totalParticipants:
+          type: integer
+          description: Total number of participants
+          example: 754
+        averageScore:
+          type: number
+          format: float
+          description: Average participant score
+          example: 682.5
+        averageCompletionTime:
+          type: integer
+          description: Average time to complete the quiz in seconds
+          example: 534
+        averageCorrectAnswers:
+          type: number
+          format: float
+          description: Average number of correct answers
+          example: 7.8
+        mostDifficultQuestion:
+          type: object
+          properties:
+            questionId:
+              type: integer
+              format: int64
+              example: 47
+            content:
+              type: string
+              example: "Which element has the highest melting point?"
+            correctPercentage:
+              type: number
+              format: float
+              example: 23.5
+        easiestQuestion:
+          type: object
+          properties:
+            questionId:
+              type: integer
+              format: int64
+              example: 42
+            content:
+              type: string
+              example: "What is the capital of France?"
+            correctPercentage:
+              type: number
+              format: float
+              example: 96.2
+
+    UserStatistics:
+      type: object
+      properties:
+        userId:
+          type: integer
+          format: int64
+          description: User ID
+          example: 201
+        totalQuizzesTaken:
+          type: integer
+          description: Total quizzes taken
+          example: 54
+        totalQuizzesHosted:
+          type: integer
+          description: Total quizzes hosted
+          example: 12
+        averageScore:
+          type: number
+          format: float
+          description: Average score across all quizzes
+          example: 742.3
+        averageRank:
+          type: number
+          format: float
+          description: Average rank across all quizzes
+          example: 2.7
+        totalCorrectAnswers:
+          type: integer
+          description: Total correct answers
+          example: 437
+        totalQuestions:
+          type: integer
+          description: Total questions answered
+          example: 540
+        correctAnswerPercentage:
+          type: number
+          format: float
+          description: Percentage of correct answers
+          example: 80.9
+        favoriteCategories:
+          type: array
+          description: Most played categories
+          items:
+            type: object
+            properties:
+              categoryId:
+                type: integer
+                format: int64
+                example: 2
+              name:
+                type: string
+                example: "Science"
+              quizCount:
+                type: integer
+                example: 23
+        bestPerformingCategory:
+          type: object
+          properties:
+            categoryId:
+              type: integer
+              format: int64
+              example: 2
+            name:
+              type: string
+              example: "Science"
+            averageScore:
+              type: number
+              format: float
+              example: 821.4
+            correctPercentage:
+              type: number
+              format: float
+              example: 87.2
+
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+          description: HTTP status code
+          example: 400
+        message:
+          type: string
+          description: Error message
+          example: "Invalid input"
+        timestamp:
+          type: string
+          format: date-time
+          description: Time when the error occurred
+          example: "2023-05-04T12:00:00Z"
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearerAuth: []

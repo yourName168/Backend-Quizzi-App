@@ -1,5 +1,11 @@
 # Quiz Application Microservices
 
+## Thành viên dự án
+
+- Lê Trung Hiếu - B21DCCN356
+- Đặng Minh Đức - B21DCCN
+- Đặng Minh Anh - B21DCCN
+
 ## Tổng quan dự án
 
 Đây là một ứng dụng trắc nghiệm được xây dựng theo kiến trúc microservice, sử dụng các công nghệ Spring Boot, Spring Cloud và Docker. Hệ thống bao gồm nhiều service độc lập, mỗi service có nhiệm vụ riêng biệt và có thể triển khai, mở rộng độc lập với nhau.
@@ -28,21 +34,6 @@ Hệ thống bao gồm các microservice chính sau:
 - **Docker & Docker Compose**: Container hóa và điều phối các service
 - **Maven**: Công cụ quản lý dependency và build project
 - **JWT**: JSON Web Tokens để xác thực và phân quyền
-
-## Cấu trúc dự án
-
-```
-project-root/
-├── api-gateway/               # API Gateway service
-├── eureka-server/             # Service discovery server
-├── user-service/              # Quản lý người dùng
-├── quiz-service/              # Quản lý bài trắc nghiệm
-├── question-service/          # Quản lý câu hỏi
-├── gameplay-service/          # Quản lý quá trình chơi
-├── identity-service/          # Quản lý xác thực và phân quyền
-├── docker-compose.yml         # Cấu hình Docker Compose
-└── init-db.sql                # Script khởi tạo cơ sở dữ liệu
-```
 
 ## Cài đặt và chạy
 
@@ -115,6 +106,25 @@ docker-compose up -d
 ### Identity API
 - `POST /api/auth/login`: Đăng nhập
 - `POST /api/auth/register`: Đăng ký tài khoản mới
+
+## API Documentation với Swagger UI
+
+Tất cả các service đều được tích hợp với Swagger UI để cung cấp tài liệu API trực quan và có thể tương tác. Để truy cập tài liệu API:
+
+1. Khởi động hệ thống với `docker-compose up -d`
+2. Truy cập Swagger UI cho từng service:
+   - User Service: http://localhost:8081/swagger-ui/index.html
+   - Quiz Service: http://localhost:8082/swagger-ui/index.html
+   - Question Service: http://localhost:8083/swagger-ui/index.html
+   - Gameplay Service: http://localhost:8084/swagger-ui/index.html
+   - Identity Service: http://localhost:8085/swagger-ui/index.html
+
+Hoặc truy cập thông qua API Gateway:
+   - http://localhost:8080/user-service/swagger-ui/index.html
+   - http://localhost:8080/quiz-service/swagger-ui/index.html
+   - http://localhost:8080/question-service/swagger-ui/index.html
+   - http://localhost:8080/gameplay-service/swagger-ui/index.html
+   - http://localhost:8080/identity-service/swagger-ui/index.html
 
 ## Bảo mật
 

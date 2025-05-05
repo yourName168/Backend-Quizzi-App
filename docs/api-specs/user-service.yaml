@@ -11,6 +11,10 @@ servers:
     description: API Gateway URL for User Service in local development
   - url: https://quiz-app.example.com/api/users
     description: Production API Gateway URL
+  - url: http://user-service:8081/api/users
+    description: Internal Docker network URL for direct service-to-service communication
+  - url: http://user-service:8081
+    description: Internal Docker network base URL
 
 tags:
   - name: Users

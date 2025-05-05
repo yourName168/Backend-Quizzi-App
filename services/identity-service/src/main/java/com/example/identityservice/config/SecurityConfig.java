@@ -13,6 +13,17 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private static final String[] WHITE_LIST_URLS = {
+        "/api/auth/**",
+        "/actuator/**",
+        "/swagger-ui/**",
+        "/swagger-ui.html",
+        "/v3/api-docs/**",
+        "/api-docs/**",
+        "/swagger-resources/**",
+        "/webjars/**"
+    };
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -20,8 +31,7 @@ public class SecurityConfig {
                 .cors().and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests(authorize -> authorize
-                        .antMatchers("/api/auth/**").permitAll()
-                        .antMatchers("/actuator/**").permitAll()
+                        .antMatchers(WHITE_LIST_URLS).permitAll()
                         .anyRequest().authenticated()
                 );
 
