@@ -81,6 +81,7 @@ public class QuestionService {
         return questionTrueFalseRepository.save(question);
     }
 
+
     public QuestionChoice createChoiceQuestion(QuestionChoiceDTO dto) {
         try {
             Object quiz = quizClient.getQuizById(dto.getQuizId());
@@ -91,9 +92,26 @@ public class QuestionService {
             throw new RuntimeException("Error checking quiz: " + e.getMessage());
         }
 
-        QuestionType questionType = questionTypeRepository.findByName("CHOICE")
-                .orElseThrow(() -> new RuntimeException("Question type CHOICE not found"));
+        String questionTypeName = "MULTI_CHOICE"; 
+        
+        int correctCount = 0;
+        for (ChoiceOptionDTO option : dto.getChoiceOptions()) {
+            if (option.getIsCorrect()) {
+                correctCount++;
+            }
+        }
+        
+        if (correctCount == 1) {
+            questionTypeName = "SINGLE_CHOICE";
+        } else if (correctCount == 0 && !dto.getChoiceOptions().isEmpty()) {
+            throw new RuntimeException("Choice questions must have at least one correct answer");
+        }
 
+        final String finalQuestionTypeName = questionTypeName;
+
+        QuestionType questionType = questionTypeRepository.findByName(finalQuestionTypeName)
+            .orElseThrow(() -> new RuntimeException("Question type " + finalQuestionTypeName + " not found"));
+        
         QuestionChoice question = QuestionChoice.builder()
                 .quizId(dto.getQuizId())
                 .questionType(questionType)
@@ -107,10 +125,17 @@ public class QuestionService {
                 .build();
 
         List<ChoiceOption> choiceOptions = new ArrayList<>();
+        LocalDateTime now = LocalDateTime.now();
+        
         for (ChoiceOptionDTO optionDTO : dto.getChoiceOptions()) {
             ChoiceOption option = ChoiceOption.builder()
                     .text(optionDTO.getText())
+                    .image(optionDTO.getImage())
+                    .audio(optionDTO.getAudio())
                     .isCorrect(optionDTO.getIsCorrect())
+                    .createdAt(now)
+                    .updatedAt(now)
+                    .question(question)
                     .build();
             choiceOptions.add(option);
         }
@@ -118,6 +143,50 @@ public class QuestionService {
         question.setChoiceOptions(choiceOptions);
 
         return questionChoiceRepository.save(question);
+    }
+
+    public QuestionChoice createSingleChoiceQuestion(QuestionChoiceDTO dto) {
+        boolean hasCorrectAnswer = false;
+        for (ChoiceOptionDTO optionDTO : dto.getChoiceOptions()) {
+            if (optionDTO.getIsCorrect()) {
+                if (hasCorrectAnswer) {
+                    throw new RuntimeException("Single choice questions can only have one correct answer");
+                }
+                hasCorrectAnswer = true;
+            }
+        }
+        
+        if (!hasCorrectAnswer && !dto.getChoiceOptions().isEmpty()) {
+            throw new RuntimeException("Single choice questions must have exactly one correct answer");
+        }
+        
+        QuestionType questionType = questionTypeRepository.findByName("SINGLE_CHOICE")
+                .orElseThrow(() -> new RuntimeException("Question type SINGLE_CHOICE not found"));
+        
+        dto.setQuestionTypeId(questionType.getId());
+        
+        return createChoiceQuestion(dto);
+    }
+
+    public QuestionChoice createMultiChoiceQuestion(QuestionChoiceDTO dto) {
+        boolean hasCorrectAnswer = false;
+        for (ChoiceOptionDTO optionDTO : dto.getChoiceOptions()) {
+            if (optionDTO.getIsCorrect()) {
+                hasCorrectAnswer = true;
+                break;
+            }
+        }
+        
+        if (!hasCorrectAnswer && !dto.getChoiceOptions().isEmpty()) {
+            throw new RuntimeException("Multi-choice questions must have at least one correct answer");
+        }
+        
+        QuestionType questionType = questionTypeRepository.findByName("MULTI_CHOICE")
+                .orElseThrow(() -> new RuntimeException("Question type MULTI_CHOICE not found"));
+        
+        dto.setQuestionTypeId(questionType.getId());
+        
+        return createChoiceQuestion(dto);
     }
 
     public QuestionSlider createSliderQuestion(QuestionSliderDTO dto) {
@@ -214,7 +283,6 @@ public class QuestionService {
                 .description(dto.getDescription())
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
-                .acceptedAnswers(dto.getAcceptedAnswers())
                 .caseSensitive(dto.getCaseSensitive())
                 .build();
 
@@ -223,6 +291,46 @@ public class QuestionService {
 
     public List<Question> getAllQuestions() {
         return questionRepository.findAll();
+    }
+
+    public List<Question> getAllQuestionsByQuizId(Long quizId) {
+        return questionRepository.findByQuizId(quizId);
+    }
+
+    public List<Object> getAllTypedQuestionsByQuizId(Long quizId) {
+        List<Question> questions = questionRepository.findByQuizId(quizId);
+        List<Object> typedQuestions = new ArrayList<>();
+        
+        for (Question question : questions) {
+            String questionType = question.getQuestionType().getName();
+            switch (questionType) {
+                case "TRUE_FALSE":
+                    typedQuestions.add(questionTrueFalseRepository.findById(question.getId())
+                        .orElseThrow(() -> new RuntimeException("Question not found with id: " + question.getId())));
+                    break;
+                case "SINGLE_CHOICE":
+                case "MULTI_CHOICE":
+                    typedQuestions.add(questionChoiceRepository.findById(question.getId())
+                        .orElseThrow(() -> new RuntimeException("Question not found with id: " + question.getId())));
+                    break;
+                case "SLIDER":
+                    typedQuestions.add(questionSliderRepository.findById(question.getId())
+                        .orElseThrow(() -> new RuntimeException("Question not found with id: " + question.getId())));
+                    break;
+                case "PUZZLE":
+                    typedQuestions.add(questionPuzzleRepository.findById(question.getId())
+                        .orElseThrow(() -> new RuntimeException("Question not found with id: " + question.getId())));
+                    break;
+                case "TEXT":
+                    typedQuestions.add(questionTypeTextRepository.findById(question.getId())
+                        .orElseThrow(() -> new RuntimeException("Question not found with id: " + question.getId())));
+                    break;
+                default:
+                    typedQuestions.add(question);
+            }
+        }
+        
+        return typedQuestions;
     }
 
     public Optional<Question> getQuestionById(Long id) {

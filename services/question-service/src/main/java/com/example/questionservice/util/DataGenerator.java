@@ -3,11 +3,14 @@ package com.example.questionservice.util;
 import com.github.javafaker.Faker;
 
 import com.example.questionservice.client.QuizClient;
+import com.example.questionservice.dto.TypeTextOptionDTO;
 import com.example.questionservice.model.*;
 import com.example.questionservice.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -25,25 +28,47 @@ public class DataGenerator implements CommandLineRunner {
     private final QuizClient quizClient;
     private final Faker faker = new Faker();
     private final Random random = new Random();
+    
+    @Value("${app.data.reset:false}")
+    private boolean resetData;
 
     @Override
+    @Transactional
     public void run(String... args) {
-        // Create question types if they don't exist
+        // if (resetData) {
+        //     cleanupExistingData();
+        // }
+        
         initializeQuestionTypes();
 
-        // Generate questions if none exist
         if (questionRepository.count() == 0) {
             try {
                 generateQuestions();
             } catch (Exception e) {
                 System.err.println("Error generating questions: " + e.getMessage());
+                e.printStackTrace();
             }
         }
     }
+    
+    @Transactional
+    private void cleanupExistingData() {
+        System.out.println("Clearing all existing data...");
+        // Delete in proper order to avoid constraint violations
+        questionTrueFalseRepository.deleteAll();
+        questionChoiceRepository.deleteAll();
+        questionSliderRepository.deleteAll();
+        questionPuzzleRepository.deleteAll();
+        questionTypeTextRepository.deleteAll();
+        questionRepository.deleteAll();
+        questionTypeRepository.deleteAll();
+        System.out.println("Data cleanup complete");
+    }
 
+    @Transactional
     private void initializeQuestionTypes() {
         List<String> questionTypeNames = Arrays.asList(
-                "TRUE_FALSE", "CHOICE", "SLIDER", "PUZZLE", "TEXT"
+                "TRUE_FALSE", "SINGLE_CHOICE", "MULTI_CHOICE", "SLIDER", "PUZZLE", "TEXT"
         );
 
         for (String name : questionTypeNames) {
@@ -58,6 +83,7 @@ public class DataGenerator implements CommandLineRunner {
         System.out.println("Question types initialized");
     }
 
+    @Transactional
     private void generateQuestions() {
         Map<String, QuestionType> questionTypes = new HashMap<>();
         questionTypeRepository.findAll().forEach(type -> questionTypes.put(type.getName(), type));
@@ -72,7 +98,7 @@ public class DataGenerator implements CommandLineRunner {
                 int questionsPerQuiz = random.nextInt(5) + 3;
                 for (int i = 0; i < questionsPerQuiz; i++) {
                     // Randomly select question type
-                    String[] types = {"TRUE_FALSE", "CHOICE", "SLIDER", "PUZZLE", "TEXT"};
+                    String[] types = {"TRUE_FALSE", "SINGLE_CHOICE", "MULTI_CHOICE", "SLIDER", "PUZZLE", "TEXT"};
                     String questionType = types[random.nextInt(types.length)];
 
                     generateQuestionByType(quizId, questionTypes.get(questionType));
@@ -90,8 +116,11 @@ public class DataGenerator implements CommandLineRunner {
             case "TRUE_FALSE":
                 generateTrueFalseQuestion(quizId, questionType);
                 break;
-            case "CHOICE":
-                generateChoiceQuestion(quizId, questionType);
+            case "SINGLE_CHOICE":
+                generateSingleChoiceQuestion(quizId, questionType);
+                break;
+            case "MULTI_CHOICE":
+                generateMultiChoiceQuestion(quizId, questionType);
                 break;
             case "SLIDER":
                 generateSliderQuestion(quizId, questionType);
@@ -108,12 +137,15 @@ public class DataGenerator implements CommandLineRunner {
     }
 
     private void generateTrueFalseQuestion(Long quizId, QuestionType questionType) {
+        List<Integer> timeLimitList = Arrays.asList(5, 10, 20, 30, 45, 60, 90, 120);
+        List<Integer> pointList = Arrays.asList(50, 100, 200, 250, 500, 750, 1000, 2000);
         QuestionTrueFalse question = QuestionTrueFalse.builder()
                 .quizId(quizId)
                 .questionType(questionType)
                 .content(faker.lorem().sentence(10))
                 .description(faker.lorem().paragraph())
-                .timeLimit((long) (random.nextInt(60) + 30))
+                .timeLimit(timeLimitList.get(random.nextInt(timeLimitList.size())))
+                .point(pointList.get(random.nextInt(pointList.size())))
                 .createdAt(LocalDateTime.now().minusDays(random.nextInt(30)))
                 .updatedAt(LocalDateTime.now())
                 .correctAnswer(random.nextBoolean())
@@ -122,38 +154,90 @@ public class DataGenerator implements CommandLineRunner {
         questionTrueFalseRepository.save(question);
     }
 
-    private void generateChoiceQuestion(Long quizId, QuestionType questionType) {
+    private void generateSingleChoiceQuestion(Long quizId, QuestionType questionType) {
+        List<Integer> timeLimitList = Arrays.asList(5, 10, 20, 30, 45, 60, 90, 120);
+        List<Integer> pointList = Arrays.asList(50, 100, 200, 250, 500, 750, 1000, 2000);
         QuestionChoice question = QuestionChoice.builder()
                 .quizId(quizId)
                 .questionType(questionType)
                 .content(faker.lorem().sentence(10))
                 .description(faker.lorem().paragraph())
-                .timeLimit((long) (random.nextInt(60) + 30))
+                .timeLimit(timeLimitList.get(random.nextInt(timeLimitList.size())))
+                .point(pointList.get(random.nextInt(pointList.size())))
                 .createdAt(LocalDateTime.now().minusDays(random.nextInt(30)))
                 .updatedAt(LocalDateTime.now())
                 .build();
 
-        // Generate 2-5 options
-        int optionCount = random.nextInt(4) + 2;
+        // Generate 3-5 options with exactly one correct answer
+        int optionCount = random.nextInt(3) + 3;
         List<ChoiceOption> options = new ArrayList<>();
-        boolean hasCorrectAnswer = false;
+        
+        // Randomly select which option will be correct
+        int correctOptionIndex = random.nextInt(optionCount);
+        
+        LocalDateTime now = LocalDateTime.now();
 
-        for (int i = 0; i < optionCount; i++) {
-            boolean isCorrect = false;
-
-            // Ensure at least one option is correct
-            if (i == optionCount - 1 && !hasCorrectAnswer) {
-                isCorrect = true;
-            } else if (!hasCorrectAnswer) {
-                isCorrect = random.nextBoolean();
-                if (isCorrect) {
-                    hasCorrectAnswer = true;
-                }
-            }
-
+        for (int i = 0; i < 4; i++) {
+            boolean isCorrect = (i == correctOptionIndex);
+            
             ChoiceOption option = ChoiceOption.builder()
                     .text(faker.lorem().sentence())
                     .isCorrect(isCorrect)
+                    .createdAt(now)
+                    .updatedAt(now)
+                    .question(question)
+                    .build();
+
+            options.add(option);
+        }
+
+        question.setChoiceOptions(options);
+        questionChoiceRepository.save(question);
+    }
+
+    private void generateMultiChoiceQuestion(Long quizId, QuestionType questionType) {
+        List<Integer> timeLimitList = Arrays.asList(5, 10, 20, 30, 45, 60, 90, 120);
+        List<Integer> pointList = Arrays.asList(50, 100, 200, 250, 500, 750, 1000, 2000);
+        QuestionChoice question = QuestionChoice.builder()
+                .quizId(quizId)
+                .questionType(questionType)
+                .content(faker.lorem().sentence(10))
+                .description(faker.lorem().paragraph())
+                .timeLimit(timeLimitList.get(random.nextInt(timeLimitList.size())))
+                .point(pointList.get(random.nextInt(pointList.size())))
+                .createdAt(LocalDateTime.now().minusDays(random.nextInt(30)))
+                .updatedAt(LocalDateTime.now())
+                .build();
+
+        // Generate 4-6 options with multiple correct answers
+        int optionCount = random.nextInt(3) + 4;
+        List<ChoiceOption> options = new ArrayList<>();
+        
+        // Ensure at least 2 options are correct
+        int correctCount = 0;
+        LocalDateTime now = LocalDateTime.now();
+
+        for (int i = 0; i < optionCount; i++) {
+            // If we're at the last option and don't have enough correct answers yet,
+            // force this one to be correct
+            boolean isCorrect;
+            if (i >= optionCount - 2 && correctCount < 2) {
+                isCorrect = true;
+                correctCount++;
+            } else {
+                // Otherwise 40% chance of being correct
+                isCorrect = random.nextDouble() < 0.4;
+                if (isCorrect) {
+                    correctCount++;
+                }
+            }
+            
+            ChoiceOption option = ChoiceOption.builder()
+                    .text(faker.lorem().sentence())
+                    .isCorrect(isCorrect)
+                    .createdAt(now)
+                    .updatedAt(now)
+                    .question(question)
                     .build();
 
             options.add(option);
@@ -164,6 +248,8 @@ public class DataGenerator implements CommandLineRunner {
     }
 
     private void generateSliderQuestion(Long quizId, QuestionType questionType) {
+        List<Integer> timeLimitList = Arrays.asList(5, 10, 20, 30, 45, 60, 90, 120);
+        List<Integer> pointList = Arrays.asList(50, 100, 200, 250, 500, 750, 1000, 2000);
         int minValue = random.nextInt(50);
         int maxValue = minValue + random.nextInt(100) + 50;
         int correctAnswer = minValue + random.nextInt(maxValue - minValue);
@@ -173,7 +259,8 @@ public class DataGenerator implements CommandLineRunner {
                 .questionType(questionType)
                 .content(faker.lorem().sentence(10))
                 .description(faker.lorem().paragraph())
-                .timeLimit((long) (random.nextInt(60) + 30))
+                .timeLimit(timeLimitList.get(random.nextInt(timeLimitList.size())))
+                .point(pointList.get(random.nextInt(pointList.size())))
                 .createdAt(LocalDateTime.now().minusDays(random.nextInt(30)))
                 .updatedAt(LocalDateTime.now())
                 .minValue(minValue)
@@ -187,12 +274,15 @@ public class DataGenerator implements CommandLineRunner {
     }
 
     private void generatePuzzleQuestion(Long quizId, QuestionType questionType) {
+        List<Integer> timeLimitList = Arrays.asList(5, 10, 20, 30, 45, 60, 90, 120);
+        List<Integer> pointList = Arrays.asList(50, 100, 200, 250, 500, 750, 1000, 2000);
         QuestionPuzzle question = QuestionPuzzle.builder()
                 .quizId(quizId)
                 .questionType(questionType)
                 .content(faker.lorem().sentence(10))
                 .description(faker.lorem().paragraph())
-                .timeLimit((long) (random.nextInt(60) + 30))
+                .timeLimit(timeLimitList.get(random.nextInt(timeLimitList.size())))
+                .point(pointList.get(random.nextInt(pointList.size())))
                 .createdAt(LocalDateTime.now().minusDays(random.nextInt(30)))
                 .updatedAt(LocalDateTime.now())
                 .build();
@@ -200,10 +290,15 @@ public class DataGenerator implements CommandLineRunner {
         // Generate 4-9 puzzle pieces
         int pieceCount = random.nextInt(6) + 4;
         List<PuzzleOption> puzzlePieces = new ArrayList<>();
+        LocalDateTime now = LocalDateTime.now();
 
         for (int i = 0; i < pieceCount; i++) {
             PuzzleOption piece = PuzzleOption.builder()
                     .correctPosition(i)
+                    .text("Piece " + (i + 1))
+                    .createdAt(now)
+                    .updatedAt(now)
+                    .question(question)
                     .build();
 
             puzzlePieces.add(piece);
@@ -214,12 +309,15 @@ public class DataGenerator implements CommandLineRunner {
     }
 
     private void generateTextQuestion(Long quizId, QuestionType questionType) {
+        List<Integer> timeLimitList = Arrays.asList(5, 10, 20, 30, 45, 60, 90, 120);
+        List<Integer> pointList = Arrays.asList(50, 100, 200, 250, 500, 750, 1000, 2000);
         QuestionTypeText question = QuestionTypeText.builder()
                 .quizId(quizId)
                 .questionType(questionType)
                 .content(faker.lorem().sentence(10))
                 .description(faker.lorem().paragraph())
-                .timeLimit((long) (random.nextInt(60) + 30))
+                .timeLimit(timeLimitList.get(random.nextInt(timeLimitList.size())))
+                .point(pointList.get(random.nextInt(pointList.size())))
                 .createdAt(LocalDateTime.now().minusDays(random.nextInt(30)))
                 .updatedAt(LocalDateTime.now())
                 .caseSensitive(random.nextBoolean())
@@ -227,10 +325,17 @@ public class DataGenerator implements CommandLineRunner {
 
         // Generate 1-3 accepted answers
         int answerCount = random.nextInt(3) + 1;
-        List<String> acceptedAnswers = new ArrayList<>();
+        List<TypeTextOption> acceptedAnswers = new ArrayList<>();
 
         for (int i = 0; i < answerCount; i++) {
-            acceptedAnswers.add(faker.lorem().word());
+            LocalDateTime now = LocalDateTime.now();
+            TypeTextOption option = TypeTextOption.builder()
+                    .text(faker.lorem().word())
+                    .createdAt(now)
+                    .updatedAt(now)
+                    .question(question)
+                    .build();
+            acceptedAnswers.add(option);
         }
 
         question.setAcceptedAnswers(acceptedAnswers);

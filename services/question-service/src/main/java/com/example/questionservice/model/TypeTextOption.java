@@ -1,3 +1,4 @@
+// Rename TypeTextOption to TextOption and make it extend Option
 package com.example.questionservice.model;
 
 import jakarta.persistence.*;
@@ -7,11 +8,10 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 @Entity
-@Table(name = "puzzle_options")
+@Table(name = "text_options")
 @Data
 @SuperBuilder
-@NoArgsConstructor
 @AllArgsConstructor
-public class PuzzleOption extends Option {
-    private Integer correctPosition;
+public class TypeTextOption extends Option {
+
 }
