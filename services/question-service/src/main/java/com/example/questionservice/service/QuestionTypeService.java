@@ -32,4 +32,22 @@ public class QuestionTypeService {
     public Optional<QuestionType> getQuestionTypeByName(String name) {
         return questionTypeRepository.findByName(name);
     }
+    
+    // Add update method
+    public Optional<QuestionType> updateQuestionType(Long id, String name) {
+        return questionTypeRepository.findById(id)
+                .map(questionType -> {
+                    questionType.setName(name);
+                    return questionTypeRepository.save(questionType);
+                });
+    }
+    
+    // Add delete method
+    public boolean deleteQuestionType(Long id) {
+        if (questionTypeRepository.existsById(id)) {
+            questionTypeRepository.deleteById(id);
+            return true;
+        }
+        return false;
+    }
 }

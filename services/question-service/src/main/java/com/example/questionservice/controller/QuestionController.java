@@ -8,8 +8,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/questions")
@@ -57,6 +60,12 @@ public class QuestionController {
         return ResponseEntity.ok(questionService.getQuestionsByQuizId(quizId));
     }
 
+    @GetMapping("/latest")
+    public ResponseEntity<List<Question>> getLatestQuestions() {
+        List<Question> latestQuestions = questionService.getLatestQuestions();
+        return ResponseEntity.ok(latestQuestions);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Question> getQuestionById(@PathVariable Long id) {
         return questionService.getQuestionById(id)
@@ -65,8 +74,91 @@ public class QuestionController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteQuestion(@PathVariable Long id) {
+    public ResponseEntity<?> deleteQuestion(@PathVariable Long id) {
+        if (!questionService.existsById(id)) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Question with ID " + id + " not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
         questionService.deleteQuestion(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateQuestion(@PathVariable Long id, @RequestBody QuestionDTO questionDTO) {
+        try {
+            Question updatedQuestion = questionService.updateQuestion(id, questionDTO);
+            return ResponseEntity.ok(updatedQuestion);
+        } catch (RuntimeException e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", e.getMessage());
+            response.put("timestamp", LocalDateTime.now());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+    }
+
+    @PutMapping("/true-false/{id}")
+    public ResponseEntity<?> updateTrueFalseQuestion(@PathVariable Long id, @RequestBody QuestionTrueFalseDTO dto) {
+        try {
+            QuestionTrueFalse updatedQuestion = questionService.updateTrueFalseQuestion(id, dto);
+            return ResponseEntity.ok(updatedQuestion);
+        } catch (RuntimeException e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", e.getMessage());
+            response.put("timestamp", LocalDateTime.now());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+    }
+
+    @PutMapping("/choice/{id}")
+    public ResponseEntity<?> updateChoiceQuestion(@PathVariable Long id, @RequestBody QuestionChoiceDTO dto) {
+        try {
+            QuestionChoice updatedQuestion = questionService.updateChoiceQuestion(id, dto);
+            return ResponseEntity.ok(updatedQuestion);
+        } catch (RuntimeException e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", e.getMessage());
+            response.put("timestamp", LocalDateTime.now());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+    }
+
+    @PutMapping("/slider/{id}")
+    public ResponseEntity<?> updateSliderQuestion(@PathVariable Long id, @RequestBody QuestionSliderDTO dto) {
+        try {
+            QuestionSlider updatedQuestion = questionService.updateSliderQuestion(id, dto);
+            return ResponseEntity.ok(updatedQuestion);
+        } catch (RuntimeException e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", e.getMessage());
+            response.put("timestamp", LocalDateTime.now());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+    }
+
+    @PutMapping("/puzzle/{id}")
+    public ResponseEntity<?> updatePuzzleQuestion(@PathVariable Long id, @RequestBody QuestionPuzzleDTO dto) {
+        try {
+            QuestionPuzzle updatedQuestion = questionService.updatePuzzleQuestion(id, dto);
+            return ResponseEntity.ok(updatedQuestion);
+        } catch (RuntimeException e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", e.getMessage());
+            response.put("timestamp", LocalDateTime.now());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+    }
+
+    @PutMapping("/text/{id}")
+    public ResponseEntity<?> updateTextQuestion(@PathVariable Long id, @RequestBody QuestionTypeTextDTO dto) {
+        try {
+            QuestionTypeText updatedQuestion = questionService.updateTextQuestion(id, dto);
+            return ResponseEntity.ok(updatedQuestion);
+        } catch (RuntimeException e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", e.getMessage());
+            response.put("timestamp", LocalDateTime.now());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
     }
 }

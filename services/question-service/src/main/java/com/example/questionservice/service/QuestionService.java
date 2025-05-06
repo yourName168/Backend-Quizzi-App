@@ -72,6 +72,7 @@ public class QuestionService {
                 .audio(dto.getAudio())
                 .content(dto.getContent())
                 .timeLimit(dto.getTimeLimit())
+                .point(dto.getPoint())
                 .description(dto.getDescription())
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
@@ -119,6 +120,7 @@ public class QuestionService {
                 .audio(dto.getAudio())
                 .content(dto.getContent())
                 .timeLimit(dto.getTimeLimit())
+                .point(dto.getPoint())
                 .description(dto.getDescription())
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
@@ -209,6 +211,7 @@ public class QuestionService {
                 .audio(dto.getAudio())
                 .content(dto.getContent())
                 .timeLimit(dto.getTimeLimit())
+                .point(dto.getPoint())
                 .description(dto.getDescription())
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
@@ -242,6 +245,7 @@ public class QuestionService {
                 .audio(dto.getAudio())
                 .content(dto.getContent())
                 .timeLimit(dto.getTimeLimit())
+                .point(dto.getPoint())
                 .description(dto.getDescription())
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
@@ -280,6 +284,7 @@ public class QuestionService {
                 .audio(dto.getAudio())
                 .content(dto.getContent())
                 .timeLimit(dto.getTimeLimit())
+                .point(dto.getPoint())
                 .description(dto.getDescription())
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
@@ -341,6 +346,187 @@ public class QuestionService {
         return questionRepository.findByQuizId(quizId);
     }
 
+    public List<Question> getLatestQuestions() {
+        return questionRepository.findTop10ByOrderByCreatedAtDesc();
+    }
+
+    public Question updateQuestion(Long id, QuestionDTO questionDTO) {
+        Question existingQuestion = questionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Question not found with id: " + id));
+        
+        QuestionType questionType = questionTypeRepository.findById(questionDTO.getQuestionTypeId())
+                .orElseThrow(() -> new RuntimeException("Question type not found"));
+        
+        existingQuestion.setQuestionType(questionType);
+        existingQuestion.setContent(questionDTO.getContent());
+        existingQuestion.setImage(questionDTO.getImage());
+        existingQuestion.setAudio(questionDTO.getAudio());
+        existingQuestion.setDescription(questionDTO.getDescription());
+        existingQuestion.setTimeLimit(questionDTO.getTimeLimit());
+        existingQuestion.setUpdatedAt(LocalDateTime.now());
+        
+        return questionRepository.save(existingQuestion);
+    }
+    
+    public QuestionTrueFalse updateTrueFalseQuestion(Long id, QuestionTrueFalseDTO dto) {
+        QuestionTrueFalse existingQuestion = questionTrueFalseRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("True/False question not found with id: " + id));
+        
+        existingQuestion.setContent(dto.getContent());
+        existingQuestion.setImage(dto.getImage());
+        existingQuestion.setAudio(dto.getAudio());
+        existingQuestion.setDescription(dto.getDescription());
+        existingQuestion.setTimeLimit(dto.getTimeLimit());
+        existingQuestion.setPoint(dto.getPoint());
+        existingQuestion.setCorrectAnswer(dto.getCorrectAnswer());
+        existingQuestion.setUpdatedAt(LocalDateTime.now());
+        
+        return questionTrueFalseRepository.save(existingQuestion);
+    }
+    
+    public QuestionChoice updateChoiceQuestion(Long id, QuestionChoiceDTO dto) {
+        QuestionChoice existingQuestion = questionChoiceRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Choice question not found with id: " + id));
+        
+        existingQuestion.setContent(dto.getContent());
+        existingQuestion.setImage(dto.getImage());
+        existingQuestion.setAudio(dto.getAudio());
+        existingQuestion.setDescription(dto.getDescription());
+        existingQuestion.setTimeLimit(dto.getTimeLimit());
+        existingQuestion.setPoint(dto.getPoint());
+        existingQuestion.setUpdatedAt(LocalDateTime.now());
+        
+        int correctCount = 0;
+        for (ChoiceOptionDTO option : dto.getChoiceOptions()) {
+            if (option.getIsCorrect()) {
+                correctCount++;
+            }
+        }
+        
+        String questionTypeName = correctCount == 1 ? "SINGLE_CHOICE" : "MULTI_CHOICE";
+        if (correctCount == 0 && !dto.getChoiceOptions().isEmpty()) {
+            throw new RuntimeException("Choice questions must have at least one correct answer");
+        }
+        
+        QuestionType questionType = questionTypeRepository.findByName(questionTypeName)
+                .orElseThrow(() -> new RuntimeException("Question type " + questionTypeName + " not found"));
+        existingQuestion.setQuestionType(questionType);
+        
+        existingQuestion.getChoiceOptions().clear();
+        
+        List<ChoiceOption> choiceOptions = new ArrayList<>();
+        LocalDateTime now = LocalDateTime.now();
+        
+        for (ChoiceOptionDTO optionDTO : dto.getChoiceOptions()) {
+            ChoiceOption option = ChoiceOption.builder()
+                    .text(optionDTO.getText())
+                    .image(optionDTO.getImage())
+                    .audio(optionDTO.getAudio())
+                    .isCorrect(optionDTO.getIsCorrect())
+                    .createdAt(now)
+                    .updatedAt(now)
+                    .question(existingQuestion)
+                    .build();
+            choiceOptions.add(option);
+        }
+        
+        existingQuestion.setChoiceOptions(choiceOptions);
+        
+        return questionChoiceRepository.save(existingQuestion);
+    }
+    
+    public QuestionSlider updateSliderQuestion(Long id, QuestionSliderDTO dto) {
+        QuestionSlider existingQuestion = questionSliderRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Slider question not found with id: " + id));
+        
+        existingQuestion.setContent(dto.getContent());
+        existingQuestion.setImage(dto.getImage());
+        existingQuestion.setAudio(dto.getAudio());
+        existingQuestion.setDescription(dto.getDescription());
+        existingQuestion.setTimeLimit(dto.getTimeLimit());
+        existingQuestion.setPoint(dto.getPoint());
+        existingQuestion.setMinValue(dto.getMinValue());
+        existingQuestion.setMaxValue(dto.getMaxValue());
+        existingQuestion.setDefaultValue(dto.getDefaultValue());
+        existingQuestion.setCorrectAnswer(dto.getCorrectAnswer());
+        existingQuestion.setLambda(dto.getLambda());
+        existingQuestion.setUpdatedAt(LocalDateTime.now());
+        
+        return questionSliderRepository.save(existingQuestion);
+    }
+    
+    public QuestionPuzzle updatePuzzleQuestion(Long id, QuestionPuzzleDTO dto) {
+        QuestionPuzzle existingQuestion = questionPuzzleRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Puzzle question not found with id: " + id));
+        
+        existingQuestion.setContent(dto.getContent());
+        existingQuestion.setImage(dto.getImage());
+        existingQuestion.setAudio(dto.getAudio());
+        existingQuestion.setDescription(dto.getDescription());
+        existingQuestion.setTimeLimit(dto.getTimeLimit());
+        existingQuestion.setPoint(dto.getPoint());
+        existingQuestion.setUpdatedAt(LocalDateTime.now());
+        
+        existingQuestion.getPuzzlePieces().clear();
+        
+        List<PuzzleOption> puzzlePieces = new ArrayList<>();
+        LocalDateTime now = LocalDateTime.now();
+        
+        for (PuzzleOptionDTO optionDTO : dto.getPuzzlePieces()) {
+            PuzzleOption option = PuzzleOption.builder()
+                    .correctPosition(optionDTO.getCorrectPosition())
+                    .text(optionDTO.getText())
+                    .createdAt(now)
+                    .updatedAt(now)
+                    .question(existingQuestion)
+                    .build();
+            puzzlePieces.add(option);
+        }
+        
+        existingQuestion.setPuzzlePieces(puzzlePieces);
+        
+        return questionPuzzleRepository.save(existingQuestion);
+    }
+    
+    public QuestionTypeText updateTextQuestion(Long id, QuestionTypeTextDTO dto) {
+        QuestionTypeText existingQuestion = questionTypeTextRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Text question not found with id: " + id));
+        
+        existingQuestion.setContent(dto.getContent());
+        existingQuestion.setImage(dto.getImage());
+        existingQuestion.setAudio(dto.getAudio());
+        existingQuestion.setDescription(dto.getDescription());
+        existingQuestion.setTimeLimit(dto.getTimeLimit());
+        existingQuestion.setPoint(dto.getPoint());
+        existingQuestion.setCaseSensitive(dto.getCaseSensitive());
+        existingQuestion.setUpdatedAt(LocalDateTime.now());
+        
+        if (dto.getAcceptedAnswers() != null && !dto.getAcceptedAnswers().isEmpty()) {
+            existingQuestion.getAcceptedAnswers().clear();
+            
+            List<TypeTextOption> acceptedAnswers = new ArrayList<>();
+            LocalDateTime now = LocalDateTime.now();
+            
+            for (TypeTextOptionDTO optionDTO : dto.getAcceptedAnswers()) {
+                TypeTextOption option = TypeTextOption.builder()
+                        .text(optionDTO.getText())
+                        .createdAt(now)
+                        .updatedAt(now)
+                        .question(existingQuestion)
+                        .build();
+                acceptedAnswers.add(option);
+            }
+            
+            existingQuestion.setAcceptedAnswers(acceptedAnswers);
+        }
+        
+        return questionTypeTextRepository.save(existingQuestion);
+    }
+
+    public boolean existsById(Long id) {
+        return questionRepository.existsById(id);
+    }
+    
     public void deleteQuestion(Long id) {
         questionRepository.deleteById(id);
     }
