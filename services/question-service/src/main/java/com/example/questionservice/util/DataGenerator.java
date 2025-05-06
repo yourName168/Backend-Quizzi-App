@@ -1,15 +1,16 @@
 package com.example.questionservice.util;
 
 import com.github.javafaker.Faker;
-
 import com.example.questionservice.client.QuizClient;
-import com.example.questionservice.dto.TypeTextOptionDTO;
 import com.example.questionservice.model.*;
 import com.example.questionservice.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -18,6 +19,8 @@ import java.util.*;
 @Component
 @RequiredArgsConstructor
 public class DataGenerator implements CommandLineRunner {
+    private static final Logger logger = LoggerFactory.getLogger(DataGenerator.class);
+    
     private final QuestionRepository questionRepository;
     private final QuestionTypeRepository questionTypeRepository;
     private final QuestionTrueFalseRepository questionTrueFalseRepository;
@@ -33,28 +36,26 @@ public class DataGenerator implements CommandLineRunner {
     private boolean resetData;
 
     @Override
-    @Transactional
     public void run(String... args) {
-        // if (resetData) {
-        //     cleanupExistingData();
-        // }
-        
-        initializeQuestionTypes();
-
-        if (questionRepository.count() == 0) {
-            try {
-                generateQuestions();
-            } catch (Exception e) {
-                System.err.println("Error generating questions: " + e.getMessage());
-                e.printStackTrace();
+        // Remove @Transactional from here
+        try {
+            if (resetData) {
+                cleanupData();
             }
+            
+            initializeQuestionTypes();
+
+            if (questionRepository.count() == 0) {
+                generateAllQuestions();
+            }
+        } catch (Exception e) {
+            logger.error("Error in data generation: {}", e.getMessage(), e);
         }
     }
     
-    @Transactional
-    private void cleanupExistingData() {
-        System.out.println("Clearing all existing data...");
-        // Delete in proper order to avoid constraint violations
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void cleanupData() {
+        logger.info("Cleaning up existing data");
         questionTrueFalseRepository.deleteAll();
         questionChoiceRepository.deleteAll();
         questionSliderRepository.deleteAll();
@@ -62,11 +63,12 @@ public class DataGenerator implements CommandLineRunner {
         questionTypeTextRepository.deleteAll();
         questionRepository.deleteAll();
         questionTypeRepository.deleteAll();
-        System.out.println("Data cleanup complete");
+        logger.info("Data cleanup complete");
     }
 
-    @Transactional
-    private void initializeQuestionTypes() {
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void initializeQuestionTypes() {
+        logger.info("Initializing question types");
         List<String> questionTypeNames = Arrays.asList(
                 "TRUE_FALSE", "SINGLE_CHOICE", "MULTI_CHOICE", "SLIDER", "PUZZLE", "TEXT"
         );
@@ -79,36 +81,37 @@ public class DataGenerator implements CommandLineRunner {
                 questionTypeRepository.save(questionType);
             }
         }
-
-        System.out.println("Question types initialized");
+        logger.info("Question types initialized");
     }
 
-    @Transactional
-    private void generateQuestions() {
+    public void generateAllQuestions() {
+        logger.info("Starting question generation");
         Map<String, QuestionType> questionTypes = new HashMap<>();
         questionTypeRepository.findAll().forEach(type -> questionTypes.put(type.getName(), type));
 
-        // Assume we have 30 quizzes from IDs 1-30
+        // Generate for each quiz in a separate transaction
         for (long quizId = 1; quizId <= 30; quizId++) {
             try {
-                // In a real scenario, check if quiz exists using the client
-                // For simplicity, we'll assume all quizzes exist
-
-                // Generate 3-7 questions per quiz
-                int questionsPerQuiz = random.nextInt(5) + 3;
-                for (int i = 0; i < questionsPerQuiz; i++) {
-                    // Randomly select question type
-                    String[] types = {"TRUE_FALSE", "SINGLE_CHOICE", "MULTI_CHOICE", "SLIDER", "PUZZLE", "TEXT"};
-                    String questionType = types[random.nextInt(types.length)];
-
-                    generateQuestionByType(quizId, questionTypes.get(questionType));
-                }
+                generateQuestionsForQuiz(quizId, questionTypes);
             } catch (Exception e) {
-                System.err.println("Error generating questions for quiz " + quizId + ": " + e.getMessage());
+                logger.error("Error generating questions for quiz {}: {}", quizId, e.getMessage());
+                // Continue with next quiz
             }
         }
+        logger.info("Question generation completed");
+    }
 
-        System.out.println("Generated questions for quizzes");
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void generateQuestionsForQuiz(Long quizId, Map<String, QuestionType> questionTypes) {
+        int questionsPerQuiz = random.nextInt(5) + 3;
+        logger.info("Generating {} questions for quiz {}", questionsPerQuiz, quizId);
+        
+        for (int i = 0; i < questionsPerQuiz; i++) {
+            String[] types = {"TRUE_FALSE", "SINGLE_CHOICE", "MULTI_CHOICE", "SLIDER", "PUZZLE", "TEXT"};
+            String questionType = types[random.nextInt(types.length)];
+            
+            generateQuestionByType(quizId, questionTypes.get(questionType));
+        }
     }
 
     private void generateQuestionByType(Long quizId, QuestionType questionType) {
@@ -135,6 +138,7 @@ public class DataGenerator implements CommandLineRunner {
                 throw new IllegalStateException("Unexpected question type: " + questionType.getName());
         }
     }
+
 
     private void generateTrueFalseQuestion(Long quizId, QuestionType questionType) {
         List<Integer> timeLimitList = Arrays.asList(5, 10, 20, 30, 45, 60, 90, 120);

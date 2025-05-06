@@ -11,5 +11,6 @@ import java.util.List;
 public interface QuestionRepository extends JpaRepository<Question, Long> {
     List<Question> findAll();
     List<Question> findByQuizId(Long quizId);
+    List<Question> findTop10ByOrderByCreatedAtDesc();
 }
 

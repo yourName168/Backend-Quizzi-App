@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface QuizClient {
 
     @GetMapping("/api/quizzes/{id}")
-    Object getQuizById(@PathVariable Long id);
+    Object getQuizById(@PathVariable("id") Long id);
 
     @GetMapping("/api/quizzes/exists/{id}")
-    Boolean quizExists(@PathVariable Long id);
+    Boolean quizExists(@PathVariable("id") Long id);
 }
