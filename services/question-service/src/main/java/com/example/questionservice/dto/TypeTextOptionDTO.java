@@ -9,6 +9,6 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChoiceOptionDTO extends OptionDTO {
+public class TypeTextOptionDTO extends OptionDTO {
     private Boolean isCorrect;
 }

@@ -11,6 +11,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "questions")
 @Data
@@ -35,8 +37,9 @@ public class Question {
     private String audio;
 
     private String content;
+    private int point;
 
-    private Long timeLimit;
+    private int timeLimit;
 
     private String description;
 
@@ -45,5 +48,6 @@ public class Question {
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Option> options = new ArrayList<>();
 }

@@ -18,10 +18,10 @@ import java.util.List;
 @AllArgsConstructor
 @SuperBuilder
 public class QuestionTypeText extends Question {
-    @ElementCollection
-    @CollectionTable(name = "accepted_answers")
-    @Column(name = "answer")
-    private List<String> acceptedAnswers = new ArrayList<>();
+    
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "question_id")
+    private List<TypeTextOption> acceptedAnswers = new ArrayList<>();
 
     private Boolean caseSensitive;
 }

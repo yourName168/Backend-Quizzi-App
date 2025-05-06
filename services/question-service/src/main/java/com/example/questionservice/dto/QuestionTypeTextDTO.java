@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class QuestionTypeTextDTO extends QuestionDTO {
-    private List<String> acceptedAnswers;
+    private List<TypeTextOptionDTO> acceptedAnswers;
     private Boolean caseSensitive;
 }
 
