@@ -104,10 +104,6 @@ Mỗi dịch vụ duy trì cơ sở dữ liệu riêng để đảm bảo kết 
   - Token được xác thực bởi API Gateway trước khi chuyển tiếp yêu cầu
   - Các cuộc gọi dịch vụ-đến-dịch vụ bao gồm headers xác thực
 
-- **Kiểm Soát Truy Cập Dựa Trên Vai Trò**:
-  - Vai trò người dùng (USER, ADMIN) xác định các hành động được phép
-  - Các endpoint chỉ dành cho admin được bảo vệ bằng chú thích `@PreAuthorize`
-
 - **Xác Thực Đầu Vào**:
   - Xác thực yêu cầu ở cả phía client và server
   - Mẫu DTO được sử dụng để lọc và xác thực dữ liệu đầu vào
