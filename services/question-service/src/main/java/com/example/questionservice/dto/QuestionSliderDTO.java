@@ -16,6 +16,6 @@ public class QuestionSliderDTO extends QuestionDTO {
     private Integer maxValue;
     private Integer defaultValue;
     private Integer correctAnswer;
-    private Integer lambda;
+    private String color;
 }
 

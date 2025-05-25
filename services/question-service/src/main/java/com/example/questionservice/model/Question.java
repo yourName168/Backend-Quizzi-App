@@ -32,6 +32,7 @@ public class Question {
     @JoinColumn(name = "question_type_id")
     private QuestionType questionType;
 
+    private int position;
     private String image;
 
     private String audio;

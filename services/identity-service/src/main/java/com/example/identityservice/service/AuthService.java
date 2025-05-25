@@ -24,30 +24,24 @@ public class AuthService {
 
     public JwtAuthResponse register(RegisterRequest registerRequest) {
         try {
-            // Create user in user-service
             UserDto userDto = UserDto.builder()
                     .username(registerRequest.getUsername())
                     .email(registerRequest.getEmail())
-                    .password(registerRequest.getPassword()) // user-service sẽ mã hóa password
+                    .password(registerRequest.getPassword()) 
                     .build();
 
-            // Gọi API của user-service để tạo user
             ResponseEntity<Object> response = userServiceClient.createUser(userDto);
             
             if (response.getStatusCode().is2xxSuccessful()) {
-                // Nếu tạo thành công ở user-service, lấy thông tin user từ response
                 LinkedHashMap<String, Object> userResponse = (LinkedHashMap<String, Object>) response.getBody();
                 
                 if (userResponse != null) {
-                    // Lấy thông tin cần thiết từ response
                     Long userId = ((Number) userResponse.get("id")).longValue();
                     String username = (String) userResponse.get("username");
                     String email = (String) userResponse.get("email");
 
-                    // Sinh JWT token
                     String token = jwtTokenProvider.generateToken(username);
 
-                    // Trả về response với token
                     return new JwtAuthResponse(token, userId, username, email);
                 }
             }
@@ -63,22 +57,18 @@ public class AuthService {
 
     public JwtAuthResponse login(LoginRequest loginRequest) {
         try {
-            // Gọi API kiểm tra đăng nhập từ user-service
             ResponseEntity<Object> response = userServiceClient.authenticateUser(loginRequest);
 
             if (response.getStatusCode().is2xxSuccessful()) {
                 LinkedHashMap<String, Object> userResponse = (LinkedHashMap<String, Object>) response.getBody();
                 
                 if (userResponse != null) {
-                    // Lấy thông tin cần thiết từ response
                     Long userId = ((Number) userResponse.get("id")).longValue();
                     String username = (String) userResponse.get("username");
                     String email = (String) userResponse.get("email");
 
-                    // Sinh JWT token
                     String token = jwtTokenProvider.generateToken(username);
 
-                    // Trả về response với token
                     return new JwtAuthResponse(token, userId, username, email);
                 }
             }

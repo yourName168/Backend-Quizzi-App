@@ -1,0 +1,1979 @@
+{
+  "collections": [
+    {
+      "category": "Lập trình Mobile",
+      "authorId": 7,
+      "description": "Bộ quiz cho chủ đề lập trình mobile",
+      "visibleTo": true,
+      "coverPhoto": "images/collections/mobile.png",
+      "quizzes": [
+        {
+          "userId": 3,
+          "title": "Cơ bản về Widget",
+          "description": "Bộ câu hỏi kiểm tra kiến thức về cơ bản về widget.",
+          "keyword": "lập-trình-mobile",
+          "coverPhoto": "images/quizzes/mobile_flutter-widget.png",
+          "visible": true,
+          "visibleQuizQuestion": true,
+          "shuffle": false,
+          "questions": [
+            {
+              "questionTypeId": 1, 
+              "position": 1,
+              "image": null,
+              "audio": null,
+              "content": "Widget nào trong Flutter được sử dụng để hiển thị danh sách có thể cuộn?",
+              "point": 10,
+              "timeLimit": 30,
+              "description": "Chọn widget phù hợp nhất dành cho hiển thị danh sách",
+              "choiceOptions": [
+                {
+                  "text": "Container",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                },
+                {
+                  "text": "ListView",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "Row",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                },
+                {
+                  "text": "Column",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                }
+              ]
+            },
+            {
+              "questionTypeId": 2, 
+              "position": 2,
+              "image": null,
+              "audio": null,
+              "content": "Đâu là các loại Widget chính trong Flutter? (Chọn tất cả các đáp án đúng)",
+              "point": 15,
+              "timeLimit": 30,
+              "description": "Chọn các loại Widget chính trong Flutter",
+              "choiceOptions": [
+                {
+                  "text": "StatelessWidget",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "StatefulWidget",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "DynamicWidget",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                },
+                {
+                  "text": "PersistentWidget",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                }
+              ]
+            },
+            {
+              "questionTypeId": 5, 
+              "position": 3,
+              "image": null,
+              "audio": null,
+              "content": "StatelessWidget có thể thay đổi state nội bộ của nó?",
+              "point": 5,
+              "timeLimit": 15,
+              "description": "Xác định câu phát biểu đúng hay sai về StatelessWidget",
+              "correctAnswer": false
+            },
+            {
+              "questionTypeId": 4, 
+              "position": 4,
+              "image": null,
+              "audio": null,
+              "content": "Sắp xếp các widget theo thứ tự thừa kế từ cao đến thấp",
+              "point": 15,
+              "timeLimit": 45,
+              "description": "Kéo các mảnh ghép để tạo thành cấu trúc widget chính xác",
+              "puzzlePieces": [
+                {
+                  "text": "Widget",
+                  "image": null,
+                  "audio": null,
+                  "correctPosition": 1
+                },
+                {
+                  "text": "StatelessWidget/StatefulWidget",
+                  "image": null,
+                  "audio": null,
+                  "correctPosition": 2
+                },
+                {
+                  "text": "MaterialApp, Scaffold",
+                  "image": null,
+                  "audio": null,
+                  "correctPosition": 3
+                },
+                {
+                  "text": "Container, Text, ...",
+                  "image": null, 
+                  "audio": null,
+                  "correctPosition": 4
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "userId": 4,
+          "title": "Quản lý trạng thái trong Flutter",
+          "description": "Bộ câu hỏi kiểm tra kiến thức về quản lý trạng thái trong flutter.",
+          "keyword": "lập-trình-mobile",
+          "coverPhoto": "images/quizzes/mobile_flutter-state-management.png",
+          "visible": true,
+          "visibleQuizQuestion": true,
+          "shuffle": true,
+          "questions": [
+            {
+              "questionTypeId": 1, 
+              "position": 1,
+              "image": null,
+              "audio": null,
+              "content": "Phương thức nào được gọi khi state của một StatefulWidget thay đổi?",
+              "point": 10,
+              "timeLimit": 20,
+              "description": "Chọn phương thức lifecycle phù hợp",
+              "choiceOptions": [
+                {
+                  "text": "initState()",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                },
+                {
+                  "text": "setState()",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "build()",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                },
+                {
+                  "text": "dispose()",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                }
+              ]
+            },
+            {
+              "questionTypeId": 2, 
+              "position": 2,
+              "image": null,
+              "audio": null,
+              "content": "Đâu là các thư viện quản lý trạng thái phổ biến trong Flutter? (Chọn tất cả các đáp án đúng)",
+              "point": 15,
+              "timeLimit": 35,
+              "description": "Chọn các thư viện quản lý trạng thái phổ biến",
+              "choiceOptions": [
+                {
+                  "text": "Provider",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "Redux",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "BLoC",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "Angular",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                }
+              ]
+            },
+            {
+              "questionTypeId": 3, 
+              "position": 3,
+              "image": null,
+              "audio": null,
+              "content": "Nhập tên package quản lý state phổ biến trong Flutter được phát triển bởi Google",
+              "point": 10,
+              "timeLimit": 30,
+              "description": "Nhập chính xác tên package",
+              "acceptedAnswers": [
+                {
+                  "text": "provider",
+                  "image": null,
+                  "audio": null
+                },
+                {
+                  "text": "Provider",
+                  "image": null,
+                  "audio": null
+                }
+              ],
+              "caseSensitive": false
+            },
+            {
+              "questionTypeId": 5, 
+              "position": 4,
+              "image": null,
+              "audio": null,
+              "content": "BLoC Pattern là một kiểu quản lý trạng thái dựa trên luồng dữ liệu",
+              "point": 5,
+              "timeLimit": 15,
+              "description": "Xác định câu phát biểu đúng hay sai về BLoC Pattern",
+              "correctAnswer": true
+            },
+            {
+              "questionTypeId": 6, 
+              "position": 5,
+              "image": null,
+              "audio": null,
+              "content": "Bao nhiêu thành phần chính trong kiến trúc Redux?",
+              "point": 10,
+              "timeLimit": 20,
+              "description": "Di chuyển thanh trượt để chọn số lượng phù hợp",
+              "minValue": 1,
+              "maxValue": 10,
+              "defaultValue": 5,
+              "correctAnswer": 3,
+              "color": "#2196F3"
+            }
+          ]
+        },
+        {
+          "userId": 8,
+          "title": "Điều hướng màn hình",
+          "description": "Bộ câu hỏi kiểm tra kiến thức về điều hướng màn hình.",
+          "keyword": "lập-trình-mobile",
+          "coverPhoto": "images/quizzes/mobile_flutter-navigation.png",
+          "visible": true,
+          "visibleQuizQuestion": true,
+          "shuffle": true,
+          "questions": [
+            {
+              "questionTypeId": 1, 
+              "position": 1,
+              "image": null,
+              "audio": null,
+              "content": "Phương thức nào dùng để quay lại màn hình trước đó trong Flutter?",
+              "point": 10,
+              "timeLimit": 20,
+              "description": "Chọn phương thức điều hướng phù hợp",
+              "choiceOptions": [
+                {
+                  "text": "Navigator.push()",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                },
+                {
+                  "text": "Navigator.pop()",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "Navigator.replace()",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                },
+                {
+                  "text": "Navigator.remove()",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                }
+              ]
+            },
+            {
+              "questionTypeId": 2, 
+              "position": 2,
+              "image": null,
+              "audio": null,
+              "content": "Những package điều hướng nào dưới đây thường được sử dụng trong Flutter? (Chọn tất cả các đáp án đúng)",
+              "point": 15,
+              "timeLimit": 30,
+              "description": "Chọn các package điều hướng phổ biến trong Flutter",
+              "choiceOptions": [
+                {
+                  "text": "Go_Router",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "AutoRoute",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "React Router",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                },
+                {
+                  "text": "Navigator 2.0",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                }
+              ]
+            },
+            {
+              "questionTypeId": 5, 
+              "position": 3,
+              "image": null,
+              "audio": null,
+              "content": "Go_Router và AutoRoute đều là package điều hướng trong Flutter",
+              "point": 5,
+              "timeLimit": 15,
+              "description": "Xác định câu phát biểu đúng hay sai về các thư viện điều hướng",
+              "correctAnswer": true
+            },
+            {
+              "questionTypeId": 4, 
+              "position": 4,
+              "image": null,
+              "audio": null,
+              "content": "Sắp xếp các tham số sau để tạo thành câu lệnh điều hướng đến màn hình chi tiết sản phẩm",
+              "point": 15,
+              "timeLimit": 30,
+              "description": "Kéo các mảnh ghép để tạo thành câu lệnh chính xác",
+              "puzzlePieces": [
+                {
+                  "text": "Navigator.push(",
+                  "image": null,
+                  "audio": null,
+                  "correctPosition": 1
+                },
+                {
+                  "text": "context,",
+                  "image": null,
+                  "audio": null,
+                  "correctPosition": 2
+                },
+                {
+                  "text": "MaterialPageRoute(builder: (context) => ProductDetailScreen(id: productId))",
+                  "image": null,
+                  "audio": null,
+                  "correctPosition": 3
+                },
+                {
+                  "text": ");",
+                  "image": null,
+                  "audio": null,
+                  "correctPosition": 4
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "userId": 5,
+          "title": "Thiết kế Material Design",
+          "description": "Bộ câu hỏi kiểm tra kiến thức về thiết kế material design.",
+          "keyword": "lập-trình-mobile",
+          "coverPhoto": "images/quizzes/mobile_flutter-material-design.png",
+          "visible": true,
+          "visibleQuizQuestion": true,
+          "shuffle": false,
+          "questions": [
+            {
+              "questionTypeId": 1, 
+              "position": 1,
+              "image": null,
+              "audio": null,
+              "content": "Widget nào không thuộc Material Design trong Flutter?",
+              "point": 10,
+              "timeLimit": 20,
+              "description": "Xác định widget không thuộc Material Design",
+              "choiceOptions": [
+                {
+                  "text": "ElevatedButton",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                },
+                {
+                  "text": "CircularProgressIndicator",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                },
+                {
+                  "text": "CupertinoButton",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "Card",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                }
+              ]
+            },
+            {
+              "questionTypeId": 2, 
+              "position": 2,
+              "image": null,
+              "audio": null,
+              "content": "Đâu là các nguyên tắc thiết kế của Material Design? (Chọn tất cả đáp án đúng)",
+              "point": 15,
+              "timeLimit": 30,
+              "description": "Chọn các nguyên tắc thiết kế của Material Design",
+              "choiceOptions": [
+                {
+                  "text": "Material is the metaphor",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "Bold, graphic, intentional",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "Motion provides meaning",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "Minimal is always better",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                }
+              ]
+            },
+            {
+              "questionTypeId": 5, 
+              "position": 3,
+              "image": null,
+              "audio": null,
+              "content": "Scaffold là widget cơ bản của Material Design cung cấp cấu trúc visual layout",
+              "point": 5,
+              "timeLimit": 15,
+              "description": "Xác định câu phát biểu đúng hay sai về Scaffold",
+              "correctAnswer": true
+            },
+            {
+              "questionTypeId": 6, 
+              "position": 4,
+              "image": null,
+              "audio": null,
+              "content": "Material Design sử dụng bao nhiêu mức độ elevation chuẩn?",
+              "point": 10,
+              "timeLimit": 20,
+              "description": "Di chuyển thanh trượt để chọn số lượng phù hợp",
+              "minValue": 1,
+              "maxValue": 10,
+              "defaultValue": 5,
+              "correctAnswer": 5,
+              "color": "#4CAF50"
+            }
+          ]
+        },
+        {
+          "userId": 2,
+          "title": "Tương tác API trong Flutter",
+          "description": "Bộ câu hỏi kiểm tra kiến thức về tương tác api trong flutter.",
+          "keyword": "lập-trình-mobile",
+          "coverPhoto": "images/quizzes/mobile_flutter-api.png",
+          "visible": true,
+          "visibleQuizQuestion": true,
+          "shuffle": true,
+          "questions": [
+            {
+              "questionTypeId": 1, 
+              "position": 1,
+              "image": null,
+              "audio": null,
+              "content": "Package nào phổ biến nhất để thực hiện HTTP request trong Flutter?",
+              "point": 10,
+              "timeLimit": 20,
+              "description": "Chọn package HTTP phổ biến nhất",
+              "choiceOptions": [
+                {
+                  "text": "http",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "axios",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                },
+                {
+                  "text": "fetch",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                },
+                {
+                  "text": "request",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                }
+              ]
+            },
+            {
+              "questionTypeId": 2, 
+              "position": 2,
+              "image": null,
+              "audio": null,
+              "content": "Đâu là các phương thức HTTP được sử dụng phổ biến trong REST API? (Chọn tất cả đáp án đúng)",
+              "point": 15,
+              "timeLimit": 30,
+              "description": "Chọn các phương thức HTTP phổ biến",
+              "choiceOptions": [
+                {
+                  "text": "GET",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "POST",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "PUT",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "SEND",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                }
+              ]
+            },
+            {
+              "questionTypeId": 3, 
+              "position": 3,
+              "image": null,
+              "audio": null,
+              "content": "Nhập tên phương thức để chuyển đổi JSON string thành object trong Dart",
+              "point": 10,
+              "timeLimit": 30,
+              "description": "Nhập chính xác tên phương thức",
+              "acceptedAnswers": [
+                {
+                  "text": "jsonDecode",
+                  "image": null,
+                  "audio": null
+                },
+                {
+                  "text": "json.decode",
+                  "image": null,
+                  "audio": null
+                }
+              ],
+              "caseSensitive": false
+            },
+            {
+              "questionTypeId": 5, 
+              "position": 4,
+              "image": null,
+              "audio": null,
+              "content": "GraphQL và REST API đều có thể được sử dụng trong ứng dụng Flutter",
+              "point": 5,
+              "timeLimit": 15,
+              "description": "Xác định câu phát biểu đúng hay sai về các loại API",
+              "correctAnswer": true
+            },
+            {
+              "questionTypeId": 4, 
+              "position": 5,
+              "image": null,
+              "audio": null,
+              "content": "Sắp xếp các bước để thực hiện một HTTP GET request trong Flutter",
+              "point": 15,
+              "timeLimit": 30,
+              "description": "Kéo các mảnh ghép để sắp xếp đúng thứ tự",
+              "puzzlePieces": [
+                {
+                  "text": "Import package http",
+                  "image": null,
+                  "audio": null,
+                  "correctPosition": 1
+                },
+                {
+                  "text": "Gửi request với http.get(Uri.parse(url))",
+                  "image": null,
+                  "audio": null,
+                  "correctPosition": 2
+                },
+                {
+                  "text": "Kiểm tra status code của response",
+                  "image": null,
+                  "audio": null,
+                  "correctPosition": 3
+                },
+                {
+                  "text": "Parse dữ liệu JSON từ response.body",
+                  "image": null,
+                  "audio": null,
+                  "correctPosition": 4
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "category": "Lập trình Web",
+      "authorId": 5,
+      "description": "Bộ quiz cho chủ đề lập trình web",
+      "visibleTo": true,
+      "coverPhoto": "images/collections/web.png",
+      "quizzes": [
+        {
+          "userId": 9,
+          "title": "HTML cơ bản",
+          "description": "Bộ câu hỏi kiểm tra kiến thức về html cơ bản.",
+          "keyword": "lập-trình-web",
+          "coverPhoto": "images/quizzes/web_basic-html.png",
+          "visible": true,
+          "visibleQuizQuestion": true,
+          "shuffle": false,
+          "questions": [
+            {
+              "questionTypeId": 1, 
+              "position": 1,
+              "image": null,
+              "audio": null,
+              "content": "Thẻ HTML nào dùng để tạo liên kết?",
+              "point": 5,
+              "timeLimit": 15,
+              "description": "Chọn thẻ HTML phù hợp",
+              "choiceOptions": [
+                {
+                  "text": "<link>",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                },
+                {
+                  "text": "<a>",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "<href>",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                },
+                {
+                  "text": "<url>",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                }
+              ]
+            },
+            {
+              "questionTypeId": 2, 
+              "position": 2,
+              "image": null,
+              "audio": null,
+              "content": "Đâu là các thẻ ngữ nghĩa trong HTML5? (Chọn tất cả đáp án đúng)",
+              "point": 15,
+              "timeLimit": 30,
+              "description": "Chọn các thẻ ngữ nghĩa HTML5",
+              "choiceOptions": [
+                {
+                  "text": "<header>",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "<section>",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "<footer>",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "<division>",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                }
+              ]
+            },
+            {
+              "questionTypeId": 5, 
+              "position": 3,
+              "image": null,
+              "audio": null,
+              "content": "HTML5 hỗ trợ các thẻ ngữ nghĩa như <header>, <footer>, <section>",
+              "point": 5,
+              "timeLimit": 15,
+              "description": "Xác định câu phát biểu đúng hay sai về HTML5",
+              "correctAnswer": true
+            },
+            {
+              "questionTypeId": 3, 
+              "position": 4,
+              "image": null,
+              "audio": null,
+              "content": "Nhập đúng phần tử HTML để hiển thị hình ảnh",
+              "point": 10,
+              "timeLimit": 20,
+              "description": "Nhập tên thẻ HTML (không bao gồm dấu <>)",
+              "acceptedAnswers": [
+                {
+                  "text": "img",
+                  "image": null,
+                  "audio": null
+                },
+                {
+                  "text": "image",
+                  "image": null,
+                  "audio": null
+                }
+              ],
+              "caseSensitive": false
+            }
+          ]
+        },
+        {
+          "userId": 6,
+          "title": "CSS nâng cao",
+          "description": "Bộ câu hỏi kiểm tra kiến thức về css nâng cao.",
+          "keyword": "lập-trình-web",
+          "coverPhoto": "images/quizzes/web_advanced-css.png",
+          "visible": true,
+          "visibleQuizQuestion": true,
+          "shuffle": true,
+          "questions": [
+            {
+              "questionTypeId": 1, 
+              "position": 1,
+              "image": null,
+              "audio": null,
+              "content": "Thuộc tính nào của Flexbox dùng để căn chỉnh các phần tử theo chiều ngang?",
+              "point": 10,
+              "timeLimit": 20,
+              "description": "Chọn thuộc tính CSS phù hợp",
+              "choiceOptions": [
+                {
+                  "text": "align-items",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                },
+                {
+                  "text": "justify-content",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "flex-direction",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                },
+                {
+                  "text": "flex-wrap",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                }
+              ]
+            },
+            {
+              "questionTypeId": 2, 
+              "position": 2,
+              "image": null,
+              "audio": null,
+              "content": "Đâu là các thuộc tính của Flexbox? (Chọn tất cả đáp án đúng)",
+              "point": 15,
+              "timeLimit": 30,
+              "description": "Chọn các thuộc tính của Flexbox",
+              "choiceOptions": [
+                {
+                  "text": "flex-direction",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "flex-wrap",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "justify-content",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "grid-template",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                }
+              ]
+            },
+            {
+              "questionTypeId": 4, 
+              "position": 3,
+              "image": null,
+              "audio": null,
+              "content": "Sắp xếp các thuộc tính CSS Grid theo thứ tự từ container đến item",
+              "point": 15,
+              "timeLimit": 30,
+              "description": "Kéo các mảnh ghép để sắp xếp đúng thứ tự",
+              "puzzlePieces": [
+                {
+                  "text": "display: grid;",
+                  "image": null,
+                  "audio": null,
+                  "correctPosition": 1
+                },
+                {
+                  "text": "grid-template-columns: 1fr 1fr;",
+                  "image": null,
+                  "audio": null,
+                  "correctPosition": 2
+                },
+                {
+                  "text": "grid-gap: 10px;",
+                  "image": null,
+                  "audio": null,
+                  "correctPosition": 3
+                },
+                {
+                  "text": "grid-column: span 2;",
+                  "image": null,
+                  "audio": null,
+                  "correctPosition": 4
+                }
+              ]
+            },
+            {
+              "questionTypeId": 6, 
+              "position": 4,
+              "image": null,
+              "audio": null,
+              "content": "Mức độ độ ưu tiên (specificity) của selector #header .nav a là bao nhiêu?",
+              "point": 10,
+              "timeLimit": 20,
+              "description": "Di chuyển thanh trượt để chọn đúng mức độ ưu tiên",
+              "minValue": 0,
+              "maxValue": 300,
+              "defaultValue": 150,
+              "correctAnswer": 111,
+              "color": "#FF5722"
+            },
+            {
+              "questionTypeId": 3, 
+              "position": 5,
+              "image": null,
+              "audio": null,
+              "content": "Điền thuộc tính CSS dùng để tạo hiệu ứng chuyển động mượt mà",
+              "point": 10,
+              "timeLimit": 20,
+              "description": "Nhập chính xác thuộc tính CSS",
+              "acceptedAnswers": [
+                {
+                  "text": "transition",
+                  "image": null,
+                  "audio": null
+                }
+              ],
+              "caseSensitive": false
+            }
+          ]
+        },
+        {
+          "userId": 3,
+          "title": "JavaScript DOM",
+          "description": "Bộ câu hỏi kiểm tra kiến thức về javascript dom.",
+          "keyword": "lập-trình-web",
+          "coverPhoto": "images/quizzes/web_js-dom.png",
+          "visible": true,
+          "visibleQuizQuestion": true,
+          "shuffle": false,
+          "questions": [
+            {
+              "questionTypeId": 1, 
+              "position": 1,
+              "image": null,
+              "audio": null,
+              "content": "Phương thức nào dùng để chọn một phần tử DOM dựa trên selector CSS?",
+              "point": 10,
+              "timeLimit": 20,
+              "description": "Chọn phương thức JavaScript phù hợp",
+              "choiceOptions": [
+                {
+                  "text": "document.getElement()",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                },
+                {
+                  "text": "document.querySelector()",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "document.selectElement()",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                },
+                {
+                  "text": "document.findElement()",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                }
+              ]
+            },
+            {
+              "questionTypeId": 2, 
+              "position": 2,
+              "image": null,
+              "audio": null,
+              "content": "Đâu là các phương thức chọn phần tử trong DOM? (Chọn tất cả đáp án đúng)",
+              "point": 15,
+              "timeLimit": 30,
+              "description": "Chọn các phương thức DOM chọn phần tử",
+              "choiceOptions": [
+                {
+                  "text": "getElementById()",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "getElementsByClassName()",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "querySelector()",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "selectElement()",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                }
+              ]
+            },
+            {
+              "questionTypeId": 5, 
+              "position": 3,
+              "image": null,
+              "audio": null,
+              "content": "Event bubbling là quá trình sự kiện lan truyền từ phần tử con lên phần tử cha",
+              "point": 5,
+              "timeLimit": 15,
+              "description": "Xác định câu phát biểu đúng hay sai về event bubbling",
+              "correctAnswer": true
+            },
+            {
+              "questionTypeId": 3, 
+              "position": 4,
+              "image": null,
+              "audio": null,
+              "content": "Nhập phương thức JavaScript dùng để thay đổi nội dung HTML của một phần tử",
+              "point": 10,
+              "timeLimit": 20,
+              "description": "Nhập chính xác thuộc tính DOM",
+              "acceptedAnswers": [
+                {
+                  "text": "innerHTML",
+                  "image": null,
+                  "audio": null
+                }
+              ],
+              "caseSensitive": false
+            },
+            {
+              "questionTypeId": 4, 
+              "position": 5,
+              "image": null,
+              "audio": null,
+              "content": "Sắp xếp các bước để thêm một event listener vào nút button",
+              "point": 15,
+              "timeLimit": 30,
+              "description": "Kéo các mảnh ghép để tạo thành code chính xác",
+              "puzzlePieces": [
+                {
+                  "text": "const button = document.querySelector('#myButton');",
+                  "image": null,
+                  "audio": null,
+                  "correctPosition": 1
+                },
+                {
+                  "text": "button.addEventListener(",
+                  "image": null,
+                  "audio": null,
+                  "correctPosition": 2
+                },
+                {
+                  "text": "'click',",
+                  "image": null,
+                  "audio": null,
+                  "correctPosition": 3
+                },
+                {
+                  "text": "function() { console.log('Button clicked!'); });",
+                  "image": null,
+                  "audio": null,
+                  "correctPosition": 4
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "userId": 7,
+          "title": "Xây dựng SPA với React",
+          "description": "Bộ câu hỏi kiểm tra kiến thức về xây dựng spa với react.",
+          "keyword": "lập-trình-web",
+          "coverPhoto": "images/quizzes/web_react-spa.png",
+          "visible": true,
+          "visibleQuizQuestion": true,
+          "shuffle": true,
+          "questions": [
+            {
+              "questionTypeId": 1, 
+              "position": 1,
+              "image": null,
+              "audio": null,
+              "content": "Hook nào trong React dùng để quản lý side effects?",
+              "point": 10,
+              "timeLimit": 20,
+              "description": "Chọn React Hook phù hợp",
+              "choiceOptions": [
+                {
+                  "text": "useState",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                },
+                {
+                  "text": "useEffect",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "useContext",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                },
+                {
+                  "text": "useReducer",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                }
+              ]
+            },
+            {
+              "questionTypeId": 2, 
+              "position": 2,
+              "image": null,
+              "audio": null,
+              "content": "Đâu là các Hook trong React? (Chọn tất cả đáp án đúng)",
+              "point": 15,
+              "timeLimit": 30,
+              "description": "Chọn các React Hook",
+              "choiceOptions": [
+                {
+                  "text": "useState",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "useEffect",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "useContext",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "useStyle",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                }
+              ]
+            },
+            {
+              "questionTypeId": 5, 
+              "position": 3,
+              "image": null,
+              "audio": null,
+              "content": "React Router là thư viện chính thức được phát triển bởi Facebook/Meta",
+              "point": 5,
+              "timeLimit": 15,
+              "description": "Xác định câu phát biểu đúng hay sai về React Router",
+              "correctAnswer": false
+            },
+            {
+              "questionTypeId": 3, 
+              "position": 4,
+              "image": null,
+              "audio": null,
+              "content": "Nhập cú pháp để tạo một React component function",
+              "point": 10,
+              "timeLimit": 30,
+              "description": "Nhập cú pháp chính xác để tạo component (ví dụ: function MyComponent)",
+              "acceptedAnswers": [
+                {
+                  "text": "function Component() {}",
+                  "image": null,
+                  "audio": null
+                },
+                {
+                  "text": "const Component = () => {}",
+                  "image": null,
+                  "audio": null
+                }
+              ],
+              "caseSensitive": false
+            },
+            {
+              "questionTypeId": 6, 
+              "position": 5,
+              "image": null,
+              "audio": null,
+              "content": "Bao nhiêu phương pháp chính để quản lý form trong React?",
+              "point": 10,
+              "timeLimit": 20,
+              "description": "Di chuyển thanh trượt để chọn số lượng phù hợp",
+              "minValue": 1,
+              "maxValue": 5,
+              "defaultValue": 3,
+              "correctAnswer": 2,
+              "color": "#2196F3"
+            }
+          ]
+        },
+        {
+          "userId": 2,
+          "title": "RESTful API với Express",
+          "description": "Bộ câu hỏi kiểm tra kiến thức về restful api với express.",
+          "keyword": "lập-trình-web",
+          "coverPhoto": "images/quizzes/web_express-restful-api.png",
+          "visible": true,
+          "visibleQuizQuestion": true,
+          "shuffle": false,
+          "questions": [
+            {
+              "questionTypeId": 1, 
+              "position": 1,
+              "image": null,
+              "audio": null,
+              "content": "Phương thức HTTP nào thường dùng để cập nhật một phần dữ liệu?",
+              "point": 10,
+              "timeLimit": 20,
+              "description": "Chọn phương thức HTTP phù hợp",
+              "choiceOptions": [
+                {
+                  "text": "GET",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                },
+                {
+                  "text": "POST",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                },
+                {
+                  "text": "PUT",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                },
+                {
+                  "text": "PATCH",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                }
+              ]
+            },
+            {
+              "questionTypeId": 2, 
+              "position": 2,
+              "image": null,
+              "audio": null,
+              "content": "Đâu là các nguyên tắc của RESTful API? (Chọn tất cả đáp án đúng)",
+              "point": 15,
+              "timeLimit": 30,
+              "description": "Chọn các nguyên tắc của RESTful API",
+              "choiceOptions": [
+                {
+                  "text": "Stateless",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "Client-Server",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "Cacheable",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "Always use XML",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                }
+              ]
+            },
+            {
+              "questionTypeId": 5, 
+              "position": 3,
+              "image": null,
+              "audio": null,
+              "content": "Middleware trong Express là hàm có thể truy cập vào đối tượng request, response và gọi next()",
+              "point": 5,
+              "timeLimit": 15,
+              "description": "Xác định câu phát biểu đúng hay sai về Express middleware",
+              "correctAnswer": true
+            },
+            {
+              "questionTypeId": 4, 
+              "position": 4,
+              "image": null,
+              "audio": null,
+              "content": "Sắp xếp các bước để tạo một RESTful API endpoint với Express",
+              "point": 15,
+              "timeLimit": 30,
+              "description": "Kéo các mảnh ghép để tạo thành code chính xác",
+              "puzzlePieces": [
+                {
+                  "text": "const express = require('express');",
+                  "image": null,
+                  "audio": null,
+                  "correctPosition": 1
+                },
+                {
+                  "text": "const app = express();",
+                  "image": null,
+                  "audio": null,
+                  "correctPosition": 2
+                },
+                {
+                  "text": "app.get('/api/users', (req, res) => {",
+                  "image": null,
+                  "audio": null,
+                  "correctPosition": 3
+                },
+                {
+                  "text": "  res.json(users); });",
+                  "image": null,
+                  "audio": null,
+                  "correctPosition": 4
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "category": "Cấu trúc dữ liệu và Giải thuật",
+      "authorId": 8,
+      "description": "Bộ quiz cho chủ đề cấu trúc dữ liệu và giải thuật",
+      "visibleTo": true,
+      "coverPhoto": "images/collections/dsa.jpg",
+      "quizzes": [
+        {
+          "userId": 4,
+          "title": "Danh sách liên kết",
+          "description": "Bộ câu hỏi kiểm tra kiến thức về danh sách liên kết.",
+          "keyword": "cấu-trúc-dữ-liệu-và-giải-thuật",
+          "coverPhoto": "images/quizzes/dsa_linked-list.png",
+          "visible": true,
+          "visibleQuizQuestion": true,
+          "shuffle": true,
+          "questions": [
+            {
+              "questionTypeId": 1, 
+              "position": 1,
+              "image": null,
+              "audio": null,
+              "content": "Đâu KHÔNG phải là loại danh sách liên kết?",
+              "point": 10,
+              "timeLimit": 20,
+              "description": "Chọn loại danh sách liên kết không tồn tại",
+              "choiceOptions": [
+                {
+                  "text": "Danh sách liên kết đơn",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                },
+                {
+                  "text": "Danh sách liên kết đôi",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                },
+                {
+                  "text": "Danh sách liên kết vòng",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                },
+                {
+                  "text": "Danh sách liên kết nhị phân",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                }
+              ]
+            },
+            {
+              "questionTypeId": 2, 
+              "position": 2,
+              "image": null,
+              "audio": null,
+              "content": "Đâu là ưu điểm của danh sách liên kết? (Chọn tất cả đáp án đúng)",
+              "point": 15,
+              "timeLimit": 30,
+              "description": "Chọn các ưu điểm của danh sách liên kết",
+              "choiceOptions": [
+                {
+                  "text": "Thêm/xóa phần tử không cần dịch chuyển các phần tử khác",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "Kích thước có thể thay đổi linh hoạt",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "Truy cập ngẫu nhiên nhanh chóng",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                },
+                {
+                  "text": "Tối ưu bộ nhớ",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                }
+              ]
+            },
+            {
+              "questionTypeId": 5, 
+              "position": 3,
+              "image": null,
+              "audio": null,
+              "content": "Thao tác chèn node vào đầu danh sách liên kết đơn có độ phức tạp O(1)",
+              "point": 5,
+              "timeLimit": 15,
+              "description": "Xác định câu phát biểu đúng hay sai về độ phức tạp",
+              "correctAnswer": true
+            },
+            {
+              "questionTypeId": 3, 
+              "position": 4,
+              "image": null,
+              "audio": null,
+              "content": "Mỗi node trong danh sách liên kết đơn chứa gì? (Nhập 2 thành phần chính cách nhau bởi dấu phẩy)",
+              "point": 10,
+              "timeLimit": 30,
+              "description": "Nhập 2 thành phần chính",
+              "acceptedAnswers": [
+                {
+                  "text": "data, next",
+                  "image": null,
+                  "audio": null
+                },
+                {
+                  "text": "giá trị, con trỏ",
+                  "image": null,
+                  "audio": null
+                },
+                {
+                  "text": "value, pointer",
+                  "image": null,
+                  "audio": null
+                }
+              ],
+              "caseSensitive": false
+            },
+            {
+              "questionTypeId": 6, 
+              "position": 5,
+              "image": null,
+              "audio": null,
+              "content": "Độ phức tạp của thao tác tìm kiếm trong danh sách liên kết là O(n^?) (Chọn số mũ)",
+              "point": 10,
+              "timeLimit": 20,
+              "description": "Di chuyển thanh trượt để chọn số mũ phù hợp",
+              "minValue": 0,
+              "maxValue": 3,
+              "defaultValue": 1,
+              "correctAnswer": 1,
+              "color": "#673AB7"
+            }
+          ]
+        },
+        {
+          "userId": 9,
+          "title": "Cây nhị phân",
+          "description": "Bộ câu hỏi kiểm tra kiến thức về cây nhị phân.",
+          "keyword": "cấu-trúc-dữ-liệu-và-giải-thuật",
+          "coverPhoto": "images/quizzes/dsa_binary-tree.png",
+          "visible": true,
+          "visibleQuizQuestion": true,
+          "shuffle": false,
+          "questions": [
+            {
+              "questionTypeId": 1, 
+              "position": 1,
+              "image": null,
+              "audio": null,
+              "content": "Phương pháp duyệt cây nào sẽ thăm node gốc trước, sau đó duyệt cây con bên trái, cuối cùng duyệt cây con bên phải?",
+              "point": 10,
+              "timeLimit": 20,
+              "description": "Chọn phương pháp duyệt cây phù hợp",
+              "choiceOptions": [
+                {
+                  "text": "Inorder",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                },
+                {
+                  "text": "Preorder",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "Postorder",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                },
+                {
+                  "text": "Level-order",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                }
+              ]
+            },
+            {
+              "questionTypeId": 2, 
+              "position": 2,
+              "image": null,
+              "audio": null,
+              "content": "Đâu là các phương pháp duyệt cây? (Chọn tất cả đáp án đúng)",
+              "point": 15,
+              "timeLimit": 30,
+              "description": "Chọn các phương pháp duyệt cây",
+              "choiceOptions": [
+                {
+                  "text": "Inorder",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "Preorder",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "Postorder",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "Middleorder",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                }
+              ]
+            },
+            {
+              "questionTypeId": 5, 
+              "position": 3,
+              "image": null,
+              "audio": null,
+              "content": "Một cây nhị phân hoàn chỉnh (complete binary tree) với chiều cao h có 2^h - 1 nút",
+              "point": 5,
+              "timeLimit": 15,
+              "description": "Xác định câu phát biểu đúng hay sai về số nút trong cây nhị phân hoàn chỉnh",
+              "correctAnswer": false
+            },
+            {
+              "questionTypeId": 4, 
+              "position": 4,
+              "image": null,
+              "audio": null,
+              "content": "Sắp xếp các bước để thực hiện thuật toán duyệt cây theo chiều rộng (BFS)",
+              "point": 15,
+              "timeLimit": 30,
+              "description": "Kéo các mảnh ghép để sắp xếp đúng thứ tự",
+              "puzzlePieces": [
+                {
+                  "text": "Tạo một hàng đợi (queue) trống",
+                  "image": null,
+                  "audio": null,
+                  "correctPosition": 1
+                },
+                {
+                  "text": "Thêm node gốc vào hàng đợi",
+                  "image": null,
+                  "audio": null,
+                  "correctPosition": 2
+                },
+                {
+                  "text": "Lấy node đầu tiên từ hàng đợi ra và xử lý",
+                  "image": null,
+                  "audio": null,
+                  "correctPosition": 3
+                },
+                {
+                  "text": "Thêm tất cả các node con vào hàng đợi",
+                  "image": null,
+                  "audio": null,
+                  "correctPosition": 4
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "userId": 1,
+          "title": "Thuật toán sắp xếp",
+          "description": "Bộ câu hỏi kiểm tra kiến thức về thuật toán sắp xếp.",
+          "keyword": "cấu-trúc-dữ-liệu-và-giải-thuật",
+          "coverPhoto": "images/quizzes/dsa_sorting.png",
+          "visible": true,
+          "visibleQuizQuestion": true,
+          "shuffle": true,
+          "questions": [
+            {
+              "questionTypeId": 1, 
+              "position": 1,
+              "image": null,
+              "audio": null,
+              "content": "Thuật toán sắp xếp nào có độ phức tạp trung bình là O(n log n) và sử dụng phương pháp chia để trị?",
+              "point": 10,
+              "timeLimit": 20,
+              "description": "Chọn thuật toán sắp xếp phù hợp",
+              "choiceOptions": [
+                {
+                  "text": "Bubble Sort",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                },
+                {
+                  "text": "Insertion Sort",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                },
+                {
+                  "text": "Merge Sort",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "Selection Sort",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                }
+              ]
+            },
+            {
+              "questionTypeId": 2, 
+              "position": 2,
+              "image": null,
+              "audio": null,
+              "content": "Đâu là các thuật toán sắp xếp có độ phức tạp O(n log n)? (Chọn tất cả đáp án đúng)",
+              "point": 15,
+              "timeLimit": 30,
+              "description": "Chọn các thuật toán sắp xếp có độ phức tạp O(n log n)",
+              "choiceOptions": [
+                {
+                  "text": "Merge Sort",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "Quick Sort (trường hợp trung bình)",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "Heap Sort",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "Bubble Sort",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                }
+              ]
+            },
+            {
+              "questionTypeId": 5, 
+              "position": 3,
+              "image": null,
+              "audio": null,
+              "content": "Thuật toán Quick Sort có độ phức tạp trường hợp xấu nhất là O(n^2)",
+              "point": 5,
+              "timeLimit": 15,
+              "description": "Xác định câu phát biểu đúng hay sai về độ phức tạp",
+              "correctAnswer": true
+            },
+            {
+              "questionTypeId": 5, 
+              "position": 3,
+              "image": null,
+              "audio": null,
+              "content": "Đánh giá độ phức tạp không gian của Merge Sort là O(n^?)",
+              "point": 10,
+              "timeLimit": 20,
+              "description": "Di chuyển thanh trượt để chọn số mũ phù hợp",
+              "minValue": 0,
+              "maxValue": 2,
+              "defaultValue": 1,
+              "correctAnswer": 1,
+              "color": "#4CAF50"
+            },
+            {
+              "questionTypeId": 3, 
+              "position": 4,
+              "image": null,
+              "audio": null,
+              "content": "Thuật toán sắp xếp nào được sử dụng trong hầu hết các thư viện chuẩn của các ngôn ngữ lập trình như Java, Python?",
+              "point": 10,
+              "timeLimit": 30,
+              "description": "Nhập tên thuật toán",
+              "acceptedAnswers": [
+                {
+                  "text": "quicksort",
+                  "image": null,
+                  "audio": null
+                },
+                {
+                  "text": "quick sort",
+                  "image": null,
+                  "audio": null
+                }
+              ],
+              "caseSensitive": false
+            }
+          ]
+        },
+        {
+          "userId": 5,
+          "title": "Tìm kiếm nhị phân",
+          "description": "Bộ câu hỏi kiểm tra kiến thức về tìm kiếm nhị phân.",
+          "keyword": "cấu-trúc-dữ-liệu-và-giải-thuật",
+          "coverPhoto": "images/quizzes/dsa_binary-search.png",
+          "visible": true,
+          "visibleQuizQuestion": true,
+          "shuffle": false,
+          "questions": [
+            {
+              "questionTypeId": 1, 
+              "position": 1,
+              "image": null,
+              "audio": null,
+              "content": "Độ phức tạp thời gian của thuật toán tìm kiếm nhị phân là?",
+              "point": 10,
+              "timeLimit": 20,
+              "description": "Chọn độ phức tạp thời gian phù hợp",
+              "choiceOptions": [
+                {
+                  "text": "O(1)",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                },
+                {
+                  "text": "O(log n)",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "O(n)",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                },
+                {
+                  "text": "O(n log n)",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                }
+              ]
+            },
+            {
+              "questionTypeId": 5, 
+              "position": 2,
+              "image": null,
+              "audio": null,
+              "content": "Tìm kiếm nhị phân yêu cầu mảng đầu vào phải được sắp xếp",
+              "point": 5,
+              "timeLimit": 15,
+              "description": "Xác định câu phát biểu đúng hay sai về điều kiện của tìm kiếm nhị phân",
+              "correctAnswer": true
+            },
+            {
+              "questionTypeId": 4, 
+              "position": 3,
+              "image": null,
+              "audio": null,
+              "content": "Sắp xếp các bước để thực hiện thuật toán tìm kiếm nhị phân",
+              "point": 15,
+              "timeLimit": 30,
+              "description": "Kéo các mảnh ghép để sắp xếp đúng thứ tự",
+              "puzzlePieces": [
+                {
+                  "text": "Xác định giá trị đầu và cuối của mảng",
+                  "image": null,
+                  "audio": null,
+                  "correctPosition": 1
+                },
+                {
+                  "text": "Tính giá trị trung bình của hai chỉ số",
+                  "image": null,
+                  "audio": null,
+                  "correctPosition": 2
+                },
+                {
+                  "text": "So sánh giá trị trung bình với giá trị cần tìm",
+                  "image": null,
+                  "audio": null,
+                  "correctPosition": 3
+                },
+                {
+                  "text": "Điều chỉnh giá trị đầu hoặc cuối dựa trên kết quả so sánh",
+                  "image": null,
+                  "audio": null,
+                  "correctPosition": 4
+                },
+                {
+                  "text": "Lặp lại cho đến khi tìm thấy hoặc mảng rỗng",
+                  "image": null,
+                  "audio": null,
+                  "correctPosition": 5
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "userId": 7,
+          "title": "Đệ quy và quy hoạch động",
+          "description": "Bộ câu hỏi kiểm tra kiến thức về đệ quy và quy hoạch động.",
+          "keyword": "cấu-trúc-dữ-liệu-và-giải-thuật",
+          "coverPhoto": "images/quizzes/dsa_dynamic-programming.png",
+          "visible": true,
+          "visibleQuizQuestion": true,
+          "shuffle": true,
+          "questions": [
+            {
+              "questionTypeId": 1, 
+              "position": 1,
+              "image": null,
+              "audio": null,
+              "content": "Vấn đề nào sau đây thường được giải quyết bằng quy hoạch động?",
+              "point": 10,
+              "timeLimit": 20,
+              "description": "Chọn bài toán phù hợp với quy hoạch động",
+              "choiceOptions": [
+                {
+                  "text": "Tìm kiếm nhị phân",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                },
+                {
+                  "text": "Duyệt cây theo chiều rộng",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                },
+                {
+                  "text": "Bài toán cái túi (Knapsack Problem)",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": true
+                },
+                {
+                  "text": "Sắp xếp nhanh (Quick Sort)",
+                  "image": null,
+                  "audio": null,
+                  "isCorrect": false
+                }
+              ]
+            },
+            {
+              "questionTypeId": 5, 
+              "position": 2,
+              "image": null,
+              "audio": null,
+              "content": "Dãy Fibonacci là ví dụ kinh điển của bài toán có thể giải quyết bằng quy hoạch động",
+              "point": 5,
+              "timeLimit": 15,
+              "description": "Xác định câu phát biểu đúng hay sai về dãy Fibonacci",
+              "correctAnswer": true
+            },
+            {
+              "questionTypeId": 3, 
+              "position": 3,
+              "image": null,
+              "audio": null,
+              "content": "Kỹ thuật ghi nhớ kết quả tính toán trung gian trong quy hoạch động được gọi là gì?",
+              "point": 10,
+              "timeLimit": 30,
+              "description": "Nhập tên kỹ thuật",
+              "acceptedAnswers": [
+                {
+                  "text": "memoization",
+                  "image": null,
+                  "audio": null
+                },
+                {
+                  "text": "memorization",
+                  "image": null,
+                  "audio": null
+                },
+                {
+                  "text": "ghi nhớ",
+                  "image": null,
+                  "audio": null
+                }
+              ],
+              "caseSensitive": false
+            },
+            {
+              "questionTypeId": 5, 
+              "position": 4,
+              "image": null,
+              "audio": null,
+              "content": "Số lượng cách khác nhau để đi từ góc trên bên trái đến góc dưới bên phải trên lưới 3x3 (chỉ được đi xuống hoặc đi sang phải)",
+              "point": 15,
+              "timeLimit": 45,
+              "description": "Di chuyển thanh trượt để chọn số lượng phù hợp",
+              "minValue": 1,
+              "maxValue": 20,
+              "defaultValue": 10,
+              "correctAnswer": 6,
+              "color": "#FF5722"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

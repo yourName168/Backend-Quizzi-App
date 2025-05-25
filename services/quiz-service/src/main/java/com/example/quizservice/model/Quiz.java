@@ -7,8 +7,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "quizzes")
@@ -44,10 +46,13 @@ public class Quiz {
     private Boolean visibleQuizQuestion;
 
     private Boolean shuffle;
-
+    @ManyToOne
+    @JoinColumn(name = "collection_id")
+    @JsonIgnore
+    private QuizCollection quizCollection;
     @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL)
-    private Set<QuizGame> quizGames = new HashSet<>();
+    @JsonIgnore
+    @JsonManagedReference
+    private Set<QuizGame> quizGames;
 
-    @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL)
-    private Set<QuizCollection> quizCollections = new HashSet<>();
 }

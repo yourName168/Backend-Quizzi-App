@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "quiz_collections")
@@ -22,15 +24,15 @@ public class QuizCollection {
     @Column(nullable = false)
     private Long authorId;
 
-    @ManyToOne
-    @JoinColumn(name = "quiz_id")
-    private Quiz quiz;
-
     private String description;
 
     private String category;
 
     private Boolean visibleTo;
 
-    private LocalDateTime timestamp;
+    private LocalDateTime timestamp;    private String coverPhoto;
+    
+    @OneToMany(mappedBy = "quizCollection", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @Builder.Default
+    private Set<Quiz> quizzes = new HashSet<>();
 }

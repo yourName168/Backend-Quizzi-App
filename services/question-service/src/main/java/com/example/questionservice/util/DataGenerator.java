@@ -39,15 +39,15 @@ public class DataGenerator implements CommandLineRunner {
     public void run(String... args) {
         // Remove @Transactional from here
         try {
-            if (resetData) {
-                cleanupData();
-            }
+            // if (resetData) {
+            //     cleanupData();
+            // }
             
             initializeQuestionTypes();
 
-            if (questionRepository.count() == 0) {
-                generateAllQuestions();
-            }
+            // if (questionRepository.count() == 0) {
+            //     generateAllQuestions();
+            // }
         } catch (Exception e) {
             logger.error("Error in data generation: {}", e.getMessage(), e);
         }
@@ -110,37 +110,37 @@ public class DataGenerator implements CommandLineRunner {
             String[] types = {"TRUE_FALSE", "SINGLE_CHOICE", "MULTI_CHOICE", "SLIDER", "PUZZLE", "TEXT"};
             String questionType = types[random.nextInt(types.length)];
             
-            generateQuestionByType(quizId, questionTypes.get(questionType));
+            // Pass position (i) to generateQuestionByType
+            generateQuestionByType(quizId, questionTypes.get(questionType), i);
         }
     }
 
-    private void generateQuestionByType(Long quizId, QuestionType questionType) {
+    private void generateQuestionByType(Long quizId, QuestionType questionType, int position) {
         switch (questionType.getName()) {
             case "TRUE_FALSE":
-                generateTrueFalseQuestion(quizId, questionType);
+                generateTrueFalseQuestion(quizId, questionType, position);
                 break;
             case "SINGLE_CHOICE":
-                generateSingleChoiceQuestion(quizId, questionType);
+                generateSingleChoiceQuestion(quizId, questionType, position);
                 break;
             case "MULTI_CHOICE":
-                generateMultiChoiceQuestion(quizId, questionType);
+                generateMultiChoiceQuestion(quizId, questionType, position);
                 break;
             case "SLIDER":
-                generateSliderQuestion(quizId, questionType);
+                generateSliderQuestion(quizId, questionType, position);
                 break;
             case "PUZZLE":
-                generatePuzzleQuestion(quizId, questionType);
+                generatePuzzleQuestion(quizId, questionType, position);
                 break;
             case "TEXT":
-                generateTextQuestion(quizId, questionType);
+                generateTextQuestion(quizId, questionType, position);
                 break;
             default:
                 throw new IllegalStateException("Unexpected question type: " + questionType.getName());
         }
     }
 
-
-    private void generateTrueFalseQuestion(Long quizId, QuestionType questionType) {
+    private void generateTrueFalseQuestion(Long quizId, QuestionType questionType, int position) {
         List<Integer> timeLimitList = Arrays.asList(5, 10, 20, 30, 45, 60, 90, 120);
         List<Integer> pointList = Arrays.asList(50, 100, 200, 250, 500, 750, 1000, 2000);
         QuestionTrueFalse question = QuestionTrueFalse.builder()
@@ -153,12 +153,13 @@ public class DataGenerator implements CommandLineRunner {
                 .createdAt(LocalDateTime.now().minusDays(random.nextInt(30)))
                 .updatedAt(LocalDateTime.now())
                 .correctAnswer(random.nextBoolean())
+                .position(position) 
                 .build();
 
         questionTrueFalseRepository.save(question);
     }
 
-    private void generateSingleChoiceQuestion(Long quizId, QuestionType questionType) {
+    private void generateSingleChoiceQuestion(Long quizId, QuestionType questionType, int position) {
         List<Integer> timeLimitList = Arrays.asList(5, 10, 20, 30, 45, 60, 90, 120);
         List<Integer> pointList = Arrays.asList(50, 100, 200, 250, 500, 750, 1000, 2000);
         QuestionChoice question = QuestionChoice.builder()
@@ -170,6 +171,7 @@ public class DataGenerator implements CommandLineRunner {
                 .point(pointList.get(random.nextInt(pointList.size())))
                 .createdAt(LocalDateTime.now().minusDays(random.nextInt(30)))
                 .updatedAt(LocalDateTime.now())
+                .position(position) // Set the position
                 .build();
 
         // Generate 3-5 options with exactly one correct answer
@@ -199,7 +201,7 @@ public class DataGenerator implements CommandLineRunner {
         questionChoiceRepository.save(question);
     }
 
-    private void generateMultiChoiceQuestion(Long quizId, QuestionType questionType) {
+    private void generateMultiChoiceQuestion(Long quizId, QuestionType questionType, int position) {
         List<Integer> timeLimitList = Arrays.asList(5, 10, 20, 30, 45, 60, 90, 120);
         List<Integer> pointList = Arrays.asList(50, 100, 200, 250, 500, 750, 1000, 2000);
         QuestionChoice question = QuestionChoice.builder()
@@ -211,6 +213,7 @@ public class DataGenerator implements CommandLineRunner {
                 .point(pointList.get(random.nextInt(pointList.size())))
                 .createdAt(LocalDateTime.now().minusDays(random.nextInt(30)))
                 .updatedAt(LocalDateTime.now())
+                .position(position) // Set the position
                 .build();
 
         // Generate 4-6 options with multiple correct answers
@@ -251,13 +254,13 @@ public class DataGenerator implements CommandLineRunner {
         questionChoiceRepository.save(question);
     }
 
-    private void generateSliderQuestion(Long quizId, QuestionType questionType) {
+    private void generateSliderQuestion(Long quizId, QuestionType questionType, int position) {
         List<Integer> timeLimitList = Arrays.asList(5, 10, 20, 30, 45, 60, 90, 120);
         List<Integer> pointList = Arrays.asList(50, 100, 200, 250, 500, 750, 1000, 2000);
         int minValue = random.nextInt(50);
         int maxValue = minValue + random.nextInt(100) + 50;
         int correctAnswer = minValue + random.nextInt(maxValue - minValue);
-
+        List<String> sliderItems = Arrays.asList("Orange", "Green", "Blue", "Primary");
         QuestionSlider question = QuestionSlider.builder()
                 .quizId(quizId)
                 .questionType(questionType)
@@ -271,13 +274,14 @@ public class DataGenerator implements CommandLineRunner {
                 .maxValue(maxValue)
                 .defaultValue((minValue + maxValue) / 2)
                 .correctAnswer(correctAnswer)
-                .lambda(5)
+                .color(sliderItems.get(random.nextInt(sliderItems.size())))
+                .position(position) // Set the position
                 .build();
 
         questionSliderRepository.save(question);
     }
 
-    private void generatePuzzleQuestion(Long quizId, QuestionType questionType) {
+    private void generatePuzzleQuestion(Long quizId, QuestionType questionType, int position) {
         List<Integer> timeLimitList = Arrays.asList(5, 10, 20, 30, 45, 60, 90, 120);
         List<Integer> pointList = Arrays.asList(50, 100, 200, 250, 500, 750, 1000, 2000);
         QuestionPuzzle question = QuestionPuzzle.builder()
@@ -289,6 +293,7 @@ public class DataGenerator implements CommandLineRunner {
                 .point(pointList.get(random.nextInt(pointList.size())))
                 .createdAt(LocalDateTime.now().minusDays(random.nextInt(30)))
                 .updatedAt(LocalDateTime.now())
+                .position(position) // Set the position
                 .build();
 
         // Generate 4-9 puzzle pieces
@@ -312,7 +317,7 @@ public class DataGenerator implements CommandLineRunner {
         questionPuzzleRepository.save(question);
     }
 
-    private void generateTextQuestion(Long quizId, QuestionType questionType) {
+    private void generateTextQuestion(Long quizId, QuestionType questionType, int position) {
         List<Integer> timeLimitList = Arrays.asList(5, 10, 20, 30, 45, 60, 90, 120);
         List<Integer> pointList = Arrays.asList(50, 100, 200, 250, 500, 750, 1000, 2000);
         QuestionTypeText question = QuestionTypeText.builder()
@@ -325,6 +330,7 @@ public class DataGenerator implements CommandLineRunner {
                 .createdAt(LocalDateTime.now().minusDays(random.nextInt(30)))
                 .updatedAt(LocalDateTime.now())
                 .caseSensitive(random.nextBoolean())
+                .position(position) // Set the position
                 .build();
 
         // Generate 1-3 accepted answers

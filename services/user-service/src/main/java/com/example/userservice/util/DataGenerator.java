@@ -29,8 +29,8 @@ public class DataGenerator implements CommandLineRunner {
     public void run(String... args) {
         // Generate users if none exist
         if (userRepository.count() == 0) {
-            generateUsers(50);
-            generateFollowRelationships();
+            // generateUsers(50);
+            // generateFollowRelationships();
         }
     }
 

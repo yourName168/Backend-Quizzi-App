@@ -12,7 +12,7 @@ public interface UserServiceClient {
 
     @PostMapping("/api/users")
     ResponseEntity<Object> createUser(@RequestBody UserDto userDto);
-    
+
     @PostMapping("/api/users/authenticate")
     ResponseEntity<Object> authenticateUser(@RequestBody LoginRequest loginRequest);
 }

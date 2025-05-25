@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @Builder
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class QuizDTO {
     private Long userId;
+    private String quizCollectionId;
     private String title;
     private String description;
     private String keyword;
@@ -18,4 +20,6 @@ public class QuizDTO {
     private Boolean visible;
     private Boolean visibleQuizQuestion;
     private Boolean shuffle;
+    
+    private transient MultipartFile coverPhotoFile;
 }

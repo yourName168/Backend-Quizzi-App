@@ -50,7 +50,7 @@ paths:
             type: integer
             default: 10
       responses:
-        '200':
+        "200":
           description: List of users retrieved successfully
           content:
             application/json:
@@ -60,7 +60,7 @@ paths:
                   content:
                     type: array
                     items:
-                      $ref: '#/components/schemas/UserResponse'
+                      $ref: "#/components/schemas/UserResponse"
                   totalElements:
                     type: integer
                   totalPages:
@@ -69,19 +69,19 @@ paths:
                     type: integer
                   number:
                     type: integer
-        '401':
+        "401":
           description: Unauthorized - invalid or missing token
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
           description: Forbidden - insufficient permissions
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-    
+                $ref: "#/components/schemas/ErrorResponse"
+
     post:
       tags:
         - Users
@@ -93,27 +93,27 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserCreationRequest'
+              $ref: "#/components/schemas/UserCreationRequest"
       responses:
-        '201':
+        "201":
           description: User created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserResponse'
-        '400':
+                $ref: "#/components/schemas/UserResponse"
+        "400":
           description: Bad request - validation errors
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '409':
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
           description: Conflict - username or email already exists
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-  
+                $ref: "#/components/schemas/ErrorResponse"
+
   /authenticate:
     post:
       tags:
@@ -140,19 +140,19 @@ paths:
                   description: User password
                   example: securePassword123
       responses:
-        '200':
+        "200":
           description: Authentication successful
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserResponse'
-        '401':
+                $ref: "#/components/schemas/UserResponse"
+        "401":
           description: Authentication failed - invalid credentials
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-  
+                $ref: "#/components/schemas/ErrorResponse"
+
   /{userId}:
     get:
       tags:
@@ -171,25 +171,25 @@ paths:
             type: integer
             format: int64
       responses:
-        '200':
+        "200":
           description: User retrieved successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserResponse'
-        '401':
+                $ref: "#/components/schemas/UserResponse"
+        "401":
           description: Unauthorized - invalid or missing token
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
           description: User not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-    
+                $ref: "#/components/schemas/ErrorResponse"
+
     put:
       tags:
         - Users
@@ -211,39 +211,39 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserUpdateRequest'
+              $ref: "#/components/schemas/UserUpdateRequest"
       responses:
-        '200':
+        "200":
           description: User updated successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserResponse'
-        '400':
+                $ref: "#/components/schemas/UserResponse"
+        "400":
           description: Bad request - validation errors
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
           description: Unauthorized - invalid or missing token
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
           description: Forbidden - insufficient permissions
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
           description: User not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-    
+                $ref: "#/components/schemas/ErrorResponse"
+
     delete:
       tags:
         - Users
@@ -261,27 +261,27 @@ paths:
             type: integer
             format: int64
       responses:
-        '204':
+        "204":
           description: User deleted successfully
-        '401':
+        "401":
           description: Unauthorized - invalid or missing token
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
           description: Forbidden - insufficient permissions
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
           description: User not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-  
+                $ref: "#/components/schemas/ErrorResponse"
+
   /username/{username}:
     get:
       tags:
@@ -299,25 +299,25 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: User retrieved successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserResponse'
-        '401':
+                $ref: "#/components/schemas/UserResponse"
+        "401":
           description: Unauthorized - invalid or missing token
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
           description: User not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-  
+                $ref: "#/components/schemas/ErrorResponse"
+
   /getMyInfor:
     get:
       tags:
@@ -328,18 +328,18 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        '200':
+        "200":
           description: User information retrieved successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserResponse'
-        '401':
+                $ref: "#/components/schemas/UserResponse"
+        "401":
           description: Unauthorized - invalid or missing token
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
 
   # User Follows endpoints
   /user-follows:
@@ -374,7 +374,7 @@ paths:
             type: integer
             default: 10
       responses:
-        '200':
+        "200":
           description: User follows retrieved successfully
           content:
             application/json:
@@ -384,7 +384,7 @@ paths:
                   content:
                     type: array
                     items:
-                      $ref: '#/components/schemas/UserFollowResponse'
+                      $ref: "#/components/schemas/UserFollowResponse"
                   totalElements:
                     type: integer
                   totalPages:
@@ -393,13 +393,13 @@ paths:
                     type: integer
                   number:
                     type: integer
-        '401':
+        "401":
           description: Unauthorized - invalid or missing token
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-    
+                $ref: "#/components/schemas/ErrorResponse"
+
     post:
       tags:
         - User Follows
@@ -413,32 +413,32 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserFollowRequest'
+              $ref: "#/components/schemas/UserFollowRequest"
       responses:
-        '201':
+        "201":
           description: User follow relationship created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserFollowResponse'
-        '400':
+                $ref: "#/components/schemas/UserFollowResponse"
+        "400":
           description: Bad request - validation errors
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
           description: Unauthorized - invalid or missing token
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '409':
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
           description: Conflict - follow relationship already exists
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
 
   # User Music Effects endpoints
   /user-music-effects/{userId}:
@@ -459,25 +459,25 @@ paths:
             type: integer
             format: int64
       responses:
-        '200':
+        "200":
           description: User music effects retrieved successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserMusicEffectResponse'
-        '401':
+                $ref: "#/components/schemas/UserMusicEffectResponse"
+        "401":
           description: Unauthorized - invalid or missing token
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
           description: User not found or music effects not configured
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-    
+                $ref: "#/components/schemas/ErrorResponse"
+
     put:
       tags:
         - User Music Effects
@@ -499,38 +499,38 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserMusicEffectRequest'
+              $ref: "#/components/schemas/UserMusicEffectRequest"
       responses:
-        '200':
+        "200":
           description: User music effects updated successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserMusicEffectResponse'
-        '400':
+                $ref: "#/components/schemas/UserMusicEffectResponse"
+        "400":
           description: Bad request - validation errors
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
           description: Unauthorized - invalid or missing token
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
           description: Forbidden - insufficient permissions
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
           description: User not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
 
 components:
   securitySchemes:
@@ -538,7 +538,7 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
-      
+
   schemas:
     UserCreationRequest:
       type: object
@@ -588,7 +588,7 @@ components:
           type: string
           description: URL to user's avatar image
           example: https://example.com/avatars/johndoe.png
-    
+
     UserUpdateRequest:
       type: object
       properties:
@@ -625,7 +625,7 @@ components:
           type: string
           description: New URL to user's avatar image
           example: https://example.com/avatars/johndoe_new.png
-    
+
     UserResponse:
       type: object
       properties:
@@ -695,7 +695,7 @@ components:
           type: integer
           description: Total players of user's quizzes
           example: 75
-    
+
     UserFollowRequest:
       type: object
       required:
@@ -712,7 +712,7 @@ components:
           format: int64
           description: ID of the user being followed
           example: 2
-    
+
     UserFollowResponse:
       type: object
       properties:
@@ -722,15 +722,15 @@ components:
           description: Relationship ID
           example: 1
         follower:
-          $ref: '#/components/schemas/UserResponse'
+          $ref: "#/components/schemas/UserResponse"
         followee:
-          $ref: '#/components/schemas/UserResponse'
+          $ref: "#/components/schemas/UserResponse"
         createdAt:
           type: string
           format: date-time
           description: When the follow relationship was created
           example: 2023-01-15T12:00:00Z
-    
+
     UserMusicEffectRequest:
       type: object
       properties:
@@ -750,7 +750,7 @@ components:
           type: boolean
           description: Whether visual effects are enabled
           example: true
-    
+
     UserMusicEffectResponse:
       type: object
       properties:
@@ -780,7 +780,7 @@ components:
           type: boolean
           description: Whether visual effects are enabled
           example: true
-    
+
     ErrorResponse:
       type: object
       properties:
@@ -797,7 +797,11 @@ components:
           description: Detailed validation errors
           items:
             type: string
-          example: ["Username must be at least 3 characters", "Email format is invalid"]
+          example:
+            [
+              "Username must be at least 3 characters",
+              "Email format is invalid",
+            ]
         timestamp:
           type: string
           format: date-time

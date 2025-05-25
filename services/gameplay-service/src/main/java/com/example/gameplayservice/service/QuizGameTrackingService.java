@@ -18,9 +18,9 @@ public class QuizGameTrackingService {
     private final QuizClient quizClient;
     private final UserClient userClient;
 
-    public QuizGameTracking createQuizGameTracking(QuizGameTrackingDTO dto) {
+    public QuizGameTracking createQuizGameTracking(QuizGameTracking quizGameTracking) {
         try {
-            Object quiz = quizClient.getQuizById(dto.getQuizId());
+            Object quiz = quizClient.getQuizById(quizGameTracking.getQuizId());
             if (quiz == null) {
                 throw new RuntimeException("Quiz not found");
             }
@@ -29,22 +29,13 @@ public class QuizGameTrackingService {
         }
 
         try {
-            Object user = userClient.getUserById(dto.getUserId());
+            Object user = userClient.getUserById(quizGameTracking.getUserId());
             if (user == null) {
                 throw new RuntimeException("User not found");
             }
         } catch (Exception e) {
             throw new RuntimeException("Error checking user: " + e.getMessage());
         }
-
-        QuizGameTracking quizGameTracking = QuizGameTracking.builder()
-                .quizId(dto.getQuizId())
-                .userId(dto.getUserId())
-                .totalPoints(0)
-                .rank(0)
-                .currentStreak(0)
-                .bestStreak(0)
-                .build();
 
         return quizGameTrackingRepository.save(quizGameTracking);
     }
@@ -63,18 +54,6 @@ public class QuizGameTrackingService {
 
     public List<QuizGameTracking> getQuizGameTrackingsByUserId(Long userId) {
         return quizGameTrackingRepository.findByUserId(userId);
-    }
-
-    public QuizGameTracking updateQuizGameTracking(Long id, QuizGameTracking quizGameTracking) {
-        QuizGameTracking existingQuizGameTracking = quizGameTrackingRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Quiz game tracking not found"));
-
-        existingQuizGameTracking.setTotalPoints(quizGameTracking.getTotalPoints());
-        existingQuizGameTracking.setRank(quizGameTracking.getRank());
-        existingQuizGameTracking.setCurrentStreak(quizGameTracking.getCurrentStreak());
-        existingQuizGameTracking.setBestStreak(quizGameTracking.getBestStreak());
-
-        return quizGameTrackingRepository.save(existingQuizGameTracking);
     }
 
     public void deleteQuizGameTracking(Long id) {

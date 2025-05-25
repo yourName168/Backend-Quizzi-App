@@ -12,5 +12,8 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     List<Question> findAll();
     List<Question> findByQuizId(Long quizId);
     List<Question> findTop10ByOrderByCreatedAtDesc();
+    boolean existsByQuizId(Long id);
+    List<Question> findByQuizIdOrderByCreatedAtAsc(Long quizId);
+    List<Question> findByQuizIdOrderByPositionAsc(Long quizId);
 }
 

@@ -21,7 +21,6 @@ API Gateway là điểm vào duy nhất của hệ thống, chịu trách nhiệ
 | `/api/quizzes/**` | quiz-service | Quản lý bài trắc nghiệm |
 | `/api/questions/**` | question-service | Quản lý câu hỏi |
 | `/api/quiz-game-tracking/**` | gameplay-service | Theo dõi quá trình chơi |
-| `/api/roles/**`, `/api/permissions/**` | identity-service | Quản lý vai trò và quyền hạn |
 
 ## Cấu hình
 

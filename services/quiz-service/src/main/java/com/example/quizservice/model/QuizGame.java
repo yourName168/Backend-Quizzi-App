@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name = "quiz_games")
@@ -20,10 +21,9 @@ public class QuizGame {
     private Long id;
 
     @Column(nullable = false)
-    private Long adminId;
-
-    @ManyToOne
+    private Long adminId;    @ManyToOne
     @JoinColumn(name = "quiz_id")
+    @JsonBackReference
     private Quiz quiz;
 
     private LocalDateTime startedAt;

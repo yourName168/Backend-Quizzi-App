@@ -27,6 +27,8 @@ tags:
     description: Quiz leaderboard operations
   - name: statistics
     description: Quiz gameplay statistics operations
+  - name: quiz-game-tracking
+    description: Quiz game tracking and analytics operations
 
 paths:
   /quiz-sessions:
@@ -712,6 +714,260 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
+  /quiz-game-tracking:
+    get:
+      tags:
+        - quiz-game-tracking
+      summary: Get all quiz game tracking records
+      description: Retrieves all quiz game tracking records from the database
+      operationId: getAllQuizGameTrackings
+      responses:
+        '200':
+          description: Retrieved all tracking records successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/QuizGameTracking'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    
+    post:
+      tags:
+        - quiz-game-tracking
+      summary: Create a new quiz game tracking record
+      description: Creates a new tracking record for a quiz game session
+      operationId: createQuizGameTracking
+      requestBody:
+        description: Quiz game tracking details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuizGameTracking'
+      responses:
+        '201':
+          description: Tracking record created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizGameTracking'
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /quiz-game-tracking/{id}:
+    get:
+      tags:
+        - quiz-game-tracking
+      summary: Get a quiz game tracking record by ID
+      description: Retrieves a specific quiz game tracking record based on its ID
+      operationId: getQuizGameTrackingById
+      parameters:
+        - name: id
+          in: path
+          description: ID of the tracking record to retrieve
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Tracking record found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizGameTracking'
+        '404':
+          description: Tracking record not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    
+    put:
+      tags:
+        - quiz-game-tracking
+      summary: Update a quiz game tracking record
+      description: Updates an existing quiz game tracking record with new data
+      operationId: updateQuizGameTracking
+      parameters:
+        - name: id
+          in: path
+          description: ID of the tracking record to update
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Updated quiz game tracking details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuizGameTracking'
+      responses:
+        '200':
+          description: Tracking record updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizGameTracking'
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Tracking record not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    
+    delete:
+      tags:
+        - quiz-game-tracking
+      summary: Delete a quiz game tracking record
+      description: Deletes a quiz game tracking record by its ID
+      operationId: deleteQuizGameTracking
+      parameters:
+        - name: id
+          in: path
+          description: ID of the tracking record to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Tracking record deleted successfully
+        '404':
+          description: Tracking record not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  
+  /quiz-game-tracking/quiz/{quizId}:
+    get:
+      tags:
+        - quiz-game-tracking
+      summary: Get tracking records by quiz ID
+      description: Retrieves all tracking records associated with a specific quiz
+      operationId: getQuizGameTrackingsByQuizId
+      parameters:
+        - name: quizId
+          in: path
+          description: ID of the quiz to filter by
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Retrieved tracking records successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/QuizGameTracking'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  
+  /quiz-game-tracking/user/{userId}:
+    get:
+      tags:
+        - quiz-game-tracking
+      summary: Get tracking records by user ID
+      description: Retrieves all tracking records for a specific user
+      operationId: getQuizGameTrackingsByUserId
+      parameters:
+        - name: userId
+          in: path
+          description: ID of the user to filter by
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Retrieved tracking records successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/QuizGameTracking'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
 components:
   schemas:
     QuizSession:
@@ -1280,6 +1536,91 @@ components:
           format: date-time
           description: Time when the error occurred
           example: "2023-05-04T12:00:00Z"
+
+    QuizGameTracking:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique identifier for the quiz game tracking record
+          example: 1
+        quizId:
+          type: integer
+          format: int64
+          description: ID of the quiz being played
+          example: 5
+        userId:
+          type: integer
+          format: int64
+          description: ID of the user playing the quiz
+          example: 10
+        totalPoints:
+          type: integer
+          description: Total points earned in the quiz game
+          example: 850
+        rank:
+          type: integer
+          description: User's rank in the game
+          example: 3
+        currentStreak:
+          type: integer
+          description: Current streak of correct answers
+          example: 5
+        bestStreak:
+          type: integer
+          description: Best streak of correct answers
+          example: 8
+        participants:
+          type: array
+          items:
+            $ref: '#/components/schemas/Participant'
+          description: List of participants in the quiz game
+        questionTrackings:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuestionTracking'
+          description: List of question responses in the quiz game
+    
+    QuestionTracking:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique identifier for the question tracking
+          example: 1
+        userId:
+          type: integer
+          format: int64
+          description: ID of the user answering the question
+          example: 10
+        questionId:
+          type: integer
+          format: int64
+          description: ID of the question being answered
+          example: 25
+        isCorrect:
+          type: boolean
+          description: Whether the user's answer was correct
+          example: true
+        answeredAt:
+          type: string
+          format: date-time
+          description: When the question was answered
+          example: "2023-05-04T12:15:30Z"
+        timeTaken:
+          type: integer
+          description: Time taken to answer in seconds
+          example: 12
+        pointsEarned:
+          type: integer
+          description: Points earned for the answer
+          example: 100
+        responseChosen:
+          type: string
+          description: The response option chosen by the user
+          example: "Option B"
 
   securitySchemes:
     bearerAuth:

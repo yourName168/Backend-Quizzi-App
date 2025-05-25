@@ -23,5 +23,5 @@ public class QuestionSlider extends Question {
 
     private Integer correctAnswer;
 
-    private Integer lambda;
+    private String color;
 }

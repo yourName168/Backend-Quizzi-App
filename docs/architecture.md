@@ -1,112 +1,56 @@
-# System Architecture
+# Kiến Trúc Hệ Thống
 
-## Overview
-The Quiz Application is a microservices-based platform designed to create, manage, and participate in interactive quiz games. The system allows users to create quizzes with various question types, participate in live quiz sessions, track performance, and manage user interactions.
+## Tổng Quan
+- **Mục Đích**: Hệ thống microservices cung cấp nền tảng quiz tương tác, cho phép người dùng tạo, quản lý và tham gia các trò chơi trắc nghiệm với nhiều loại câu hỏi khác nhau.
+- **Thành Phần Chính**: Hệ thống bao gồm 7 thành phần chính: API Gateway, Eureka Server, Identity Service, User Service, Quiz Service, Question Service và Gameplay Service.
 
-## System Components
+## Thành Phần Hệ Thống
+- **User Service**: Quản lý thông tin người dùng, hồ sơ, cài đặt cá nhân và các mối quan hệ giữa người dùng (theo dõi, kết bạn).
+- **Quiz Service**: Quản lý việc tạo và lưu trữ quiz, bộ sưu tập quiz, trò chơi quiz và metadata liên quan.
+- **Question Service**: Quản lý nhiều loại câu hỏi khác nhau (đúng/sai, trắc nghiệm, thanh trượt, câu đố, văn bản) và nội dung của chúng.
+- **Gameplay Service**: Theo dõi phiên chơi quiz, lưu trữ câu trả lời của người chơi, tính điểm và cung cấp phân tích kết quả.
+- **Identity Service**: Xử lý đăng nhập, đăng ký, xác thực và quản lý JWT token.
+- **API Gateway**: Điểm vào duy nhất cho tất cả các request từ client, xử lý định tuyến và xác thực.
+- **Eureka Server**: Cung cấp dịch vụ khám phá và đăng ký service, giúp các service tìm thấy nhau trong mạng.
 
-- **User Service**: Manages user profiles, relationships, preferences, and settings. It stores personal information and user-related data.
+## Giao Tiếp
+- **REST APIs**: Các service giao tiếp với nhau chủ yếu thông qua REST APIs.
+- **Feign Clients**: Các service sử dụng Feign Client để tạo các REST call tới các service khác một cách khai báo.
+- **Mạng Nội Bộ**: Các service giao tiếp qua Docker network trong môi trường containerized.
+- **Quy trình Xác Thực**: 
+  1. API Gateway xác thực JWT token từ request
+  2. Identity Service cung cấp và xác thực token
+  3. Thông tin người dùng được thêm vào header trước khi chuyển tiếp đến service khác
 
-- **Quiz Service**: Handles the creation and management of quizzes, quiz collections, and quiz metadata. It's responsible for organizing content and making it discoverable.
+## Luồng Dữ Liệu
+1. **Luồng Đăng Nhập/Đăng Ký**:
+   - Client gửi request đến `/api/auth/register` hoặc `/api/auth/login` qua API Gateway
+   - Request được chuyển tiếp đến Identity Service
+   - Identity Service xác thực/đăng ký và tạo JWT token
+   - Đối với đăng ký, Identity Service gọi User Service để tạo thông tin người dùng mới
 
-- **Question Service**: Manages different types of questions (true/false, multiple choice, sliders, puzzles, text responses) and their content. It provides questions to the Quiz Service.
+2. **Luồng Tạo và Quản Lý Quiz**:
+   - Client gửi request đến API Gateway
+   - Quiz Service lưu thông tin quiz và gọi Question Service để lấy/tạo câu hỏi liên quan
+   - Quiz Service cũng gọi User Service để xác thực người tạo quiz
 
-- **Gameplay Service**: Tracks quiz game sessions, participants' responses, scores, and statistics. It handles real-time game interactions and results.
+3. **Luồng Gameplay**:
+   - Client tham gia phiên chơi thông qua API Gateway
+   - Gameplay Service gọi Quiz Service để lấy thông tin quiz
+   - Gameplay Service gọi Question Service để lấy thông tin câu hỏi
+   - Gameplay Service lưu trữ câu trả lời và tính điểm
+   - Gameplay Service gọi User Service để xác minh người tham gia
 
-- **Identity Service**: Handles authentication, authorization, and security. It issues JWT tokens and verifies user identities.
+4. **Cơ Sở Dữ Liệu**:
+   - Mỗi service quản lý cơ sở dữ liệu riêng (MySQL)
+   - Không có truy cập trực tiếp giữa các cơ sở dữ liệu service
 
-- **API Gateway**: Routes external requests to the appropriate microservices. It serves as the entry point for all client requests.
+## Sơ Đồ
+![Sơ đồ kiến trúc hệ thống](./assets/architecture-diagram.png)
 
-- **Eureka Server**: Provides service discovery and registration. It helps services locate and communicate with each other.
-
-## Communication
-Services communicate primarily through REST APIs using the following patterns:
-
-- **External Communication**: All client requests go through the API Gateway, which routes them to the appropriate service.
-
-- **Internal Communication**: Services communicate with each other using Feign Clients, which provide a declarative way to call other services' REST endpoints.
-
-- **Service Discovery**: All services register with Eureka Server, allowing them to discover and communicate with each other without hardcoded URLs.
-
-- **Authentication Flow**: The Identity Service issues JWT tokens that are included in requests and validated by services.
-
-## Data Flow
-
-1. **User Authentication Flow**:
-   - Client sends login request to API Gateway
-   - Gateway routes to Identity Service
-   - Identity Service validates credentials and issues JWT token
-   - Token is returned to client and used in subsequent requests
-
-2. **Quiz Creation Flow**:
-   - Quiz Service receives quiz creation request
-   - Quiz Service validates user via User Service
-   - Quiz data is stored in Quiz Service database
-   - Questions are created via Question Service
-
-3. **Gameplay Flow**:
-   - Gameplay Service creates a quiz session
-   - Users join via Participant endpoints
-   - Question data is retrieved from Question Service
-   - User responses are tracked and scored
-   - Results are stored and statistics updated
-
-## Diagram
-
-```
-+-------------+                 +----------------+
-|             |                 |                |
-|   Clients   |---------------->|  API Gateway   |
-| (Web/Mobile)|                 |   (Port 8080)  |
-|             |<----------------|                |
-+-------------+                 +----------------+
-                                        |
-                                        v
-                               +-----------------+
-                               |                 |
-                               | Eureka Server   |
-                               |  (Port 8761)    |
-                               |                 |
-                               +-----------------+
-                                        |
-            +---------------------------|---------------------------+
-            |                           |                           |
-            v                           v                           v
-   +----------------+          +----------------+          +----------------+
-   |                |          |                |          |                |
-   | Identity Service|<-------->| User Service   |<-------->| Quiz Service   |
-   |  (Port 8085)   |          |  (Port 8081)   |          |  (Port 8082)   |
-   |                |          |                |          |                |
-   +----------------+          +----------------+          +----------------+
-            ^                           ^                           ^
-            |                           |                           |
-            |                           v                           v
-            |                  +----------------+          +----------------+
-            |                  |                |          |                |
-            +----------------->| Question Service|<-------->| Gameplay Service|
-                               |  (Port 8083)   |          |  (Port 8084)   |
-                               |                |          |                |
-                               +----------------+          +----------------+
-                                        ^                           ^
-                                        |                           |
-                                        v                           v
-                                  +-----------------------------+
-                                  |                             |
-                                  |      MySQL Databases        |
-                                  |                             |
-                                  +-----------------------------+
-```
-
-## Scalability & Fault Tolerance
-
-- **Horizontal Scalability**: Each service can be independently scaled based on demand. For example, during high quiz activity, the Gameplay Service can be scaled without affecting other services.
-
-- **Service Registry**: Eureka Server provides service discovery, allowing for dynamic registration and discovery of service instances.
-
-- **Fault Isolation**: If one service fails, it doesn't bring down the entire system. For example, if the Question Service experiences issues, existing games can continue with cached questions.
-
-- **Database Isolation**: Each service has its own database, preventing cascading failures from database issues.
-
-- **Health Monitoring**: Services implement health endpoints for monitoring and automatic restarts when necessary.
-
-- **Circuit Breaking**: Future implementation will include circuit breakers to prevent cascading failures when inter-service communication fails.
+## Khả Năng Mở Rộng & Chịu Lỗi
+- **Khả Năng Mở Rộng Ngang**: Mỗi service có thể được mở rộng độc lập bằng cách triển khai nhiều instance.
+- **Khám Phá Dịch Vụ**: Eureka Server tự động phát hiện các instance mới của service.
+- **Cân Bằng Tải**: API Gateway và Eureka Client thực hiện cân bằng tải giữa các instance service.
+- **Khả Năng Chịu Lỗi**: Nếu một service gặp sự cố, các service khác vẫn có thể hoạt động với chức năng hạn chế.
+- **Tự Phục Hồi**: Các service tự động đăng ký lại với Eureka Server khi khởi động lại sau lỗi.

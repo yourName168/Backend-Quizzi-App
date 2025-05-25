@@ -1,6 +1,6 @@
 package com.example.quizservice.util;
-import com.github.javafaker.Faker;
 
+import com.github.javafaker.Faker;
 import com.example.quizservice.client.UserClient;
 import com.example.quizservice.model.Quiz;
 import com.example.quizservice.model.QuizCollection;
@@ -14,8 +14,10 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
@@ -35,22 +37,54 @@ public class DataGenerator implements CommandLineRunner {
     @Override
     public void run(String... args) {
         // Generate data if none exists
-        if (quizRepository.count() == 0) {
-            generateQuizzes(30);
-            generateQuizGames(20);
-            generateQuizCollections(15);
+        // if (quizRepository.count() == 0) {
+        //     List<QuizCollection> collections = generateQuizCollections(15);
+        //     generateQuizzes(30, collections);
+        //     generateQuizGames(20);
+        // }
+    }
+
+    private List<QuizCollection> generateQuizCollections(int count) {
+        List<QuizCollection> quizCollections = new ArrayList<>();
+
+        try {
+            for (int i = 0; i < count; i++) {
+                Long authorId = (long) (random.nextInt(10) + 1); // Random user ID between 1 and 10
+
+                QuizCollection quizCollection = QuizCollection.builder()
+                        .authorId(authorId)
+                        .description(faker.lorem().paragraph())
+                        .category(QUIZ_CATEGORIES[random.nextInt(QUIZ_CATEGORIES.length)])
+                        .visibleTo(random.nextBoolean())
+                        .timestamp(LocalDateTime.now().minusDays(random.nextInt(30)))
+                        // .coverPhoto("https://picsum.photos/id/" + random.nextInt(1000) + "/200/300")
+                        .quizzes(new HashSet<>())
+                        .build();
+
+                quizCollections.add(quizCollection);
+            }
+
+            return quizCollectionRepository.saveAll(quizCollections);
+        } catch (Exception e) {
+            System.err.println("Error generating quiz collections: " + e.getMessage());
+            return new ArrayList<>();
         }
     }
 
-    private void generateQuizzes(int count) {
+    private void generateQuizzes(int count, List<QuizCollection> collections) {
         List<Quiz> quizzes = new ArrayList<>();
 
+        if (collections.isEmpty()) {
+            System.out.println("No collections found. Skipping quiz generation.");
+            return;
+        }
+
         try {
-            // Fetch some user IDs from user service (assuming we have at least 10 users)
-            // In a real scenario, we would make a proper API call to get all user IDs
-            // For simplicity, we'll assume users with IDs 1-10 exist
             for (int i = 0; i < count; i++) {
                 Long userId = (long) (random.nextInt(10) + 1);
+                
+                // Select a random collection for this quiz
+                QuizCollection collection = collections.get(random.nextInt(collections.size()));
 
                 Quiz quiz = Quiz.builder()
                         .userId(userId)
@@ -58,12 +92,13 @@ public class DataGenerator implements CommandLineRunner {
                         .description(faker.lorem().paragraph())
                         .keyword(faker.lorem().words(3).toString())
                         .score(random.nextInt(100))
-                        .coverPhoto("https://picsum.photos/id/" + random.nextInt(1000) + "/200/300")
+                        // .coverPhoto("https://picsum.photos/id/" + random.nextInt(1000) + "/200/300")
                         .createdAt(LocalDateTime.now().minusDays(random.nextInt(30)))
                         .updatedAt(LocalDateTime.now().minusDays(random.nextInt(10)))
                         .visible(random.nextBoolean())
                         .visibleQuizQuestion(random.nextBoolean())
                         .shuffle(random.nextBoolean())
+                        .quizCollection(collection)  // Set the collection
                         .build();
 
                 quizzes.add(quiz);
@@ -108,38 +143,6 @@ public class DataGenerator implements CommandLineRunner {
             System.out.println("Generated " + count + " quiz games");
         } catch (Exception e) {
             System.err.println("Error generating quiz games: " + e.getMessage());
-        }
-    }
-
-    private void generateQuizCollections(int count) {
-        List<QuizCollection> quizCollections = new ArrayList<>();
-        List<Quiz> quizzes = quizRepository.findAll();
-
-        if (quizzes.isEmpty()) {
-            System.out.println("No quizzes found. Skipping quiz collection generation.");
-            return;
-        }
-
-        try {
-            for (int i = 0; i < count; i++) {
-                Quiz quiz = quizzes.get(random.nextInt(quizzes.size()));
-
-                QuizCollection quizCollection = QuizCollection.builder()
-                        .authorId((long) (random.nextInt(10) + 1)) // Random user ID between 1 and 10
-                        .quiz(quiz)
-                        .description(faker.lorem().paragraph())
-                        .category(QUIZ_CATEGORIES[random.nextInt(QUIZ_CATEGORIES.length)])
-                        .visibleTo(random.nextBoolean())
-                        .timestamp(LocalDateTime.now().minusDays(random.nextInt(30)))
-                        .build();
-
-                quizCollections.add(quizCollection);
-            }
-
-            quizCollectionRepository.saveAll(quizCollections);
-            System.out.println("Generated " + count + " quiz collections");
-        } catch (Exception e) {
-            System.err.println("Error generating quiz collections: " + e.getMessage());
         }
     }
 

@@ -1,4 +1,5 @@
 package com.example.userservice.service;
+
 import com.example.userservice.dto.UserDTO;
 import com.example.userservice.model.User;
 import com.example.userservice.model.UserMusicEffect;
@@ -7,7 +8,9 @@ import com.example.userservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -18,9 +21,9 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMusicEffectRepository userMusicEffectRepository;
     private final PasswordEncoder passwordEncoder;
+    private final FileStorageService fileStorageService;
 
-    public User createUser(UserDTO userDTO) {
-        // Check if username or email already exists
+    public User createUser(UserDTO userDTO, MultipartFile avatarFile) throws IOException {
         if (userRepository.existsByUsername(userDTO.getUsername())) {
             throw new RuntimeException("Username already exists");
         }
@@ -28,7 +31,6 @@ public class UserService {
             throw new RuntimeException("Email already exists");
         }
 
-        // Create user music effect
         UserMusicEffect userMusicEffect = UserMusicEffect.builder()
                 .music(false)
                 .soundEffects(false)
@@ -38,7 +40,6 @@ public class UserService {
 
         userMusicEffectRepository.save(userMusicEffect);
 
-        // Create user
         User user = User.builder()
                 .username(userDTO.getUsername())
                 .password(passwordEncoder.encode(userDTO.getPassword()))
@@ -49,7 +50,6 @@ public class UserService {
                 .country(userDTO.getCountry())
                 .dateOfBirth(userDTO.getDateOfBirth())
                 .age(userDTO.getAge())
-                .avatar(userDTO.getAvatar())
                 .totalQuizs(0)
                 .totalCollections(0)
                 .totalPlays(0)
@@ -58,6 +58,13 @@ public class UserService {
                 .totalPlayers(0)
                 .userMusicEffect(userMusicEffect)
                 .build();
+
+        if (avatarFile != null && !avatarFile.isEmpty()) {
+            String avatarPath = fileStorageService.storeUserAvatar(avatarFile);
+            user.setAvatar(avatarPath);
+        } else if (userDTO.getAvatar() != null) {
+            user.setAvatar(userDTO.getAvatar());
+        }
 
         return userRepository.save(user);
     }
@@ -74,7 +81,7 @@ public class UserService {
         return userRepository.findByUsername(username);
     }
 
-    public User updateUser(Long id, UserDTO userDTO) {
+    public User updateUser(Long id, UserDTO userDTO, MultipartFile avatarFile) throws IOException {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -85,23 +92,38 @@ public class UserService {
         user.setCountry(userDTO.getCountry());
         user.setDateOfBirth(userDTO.getDateOfBirth());
         user.setAge(userDTO.getAge());
-        user.setAvatar(userDTO.getAvatar());
+
+        if (avatarFile != null && !avatarFile.isEmpty()) {
+            if (user.getAvatar() != null) {
+                fileStorageService.deleteFile(user.getAvatar());
+            }
+            
+            String avatarPath = fileStorageService.storeUserAvatar(avatarFile);
+            user.setAvatar(avatarPath);
+        } else if (userDTO.getAvatar() != null && !userDTO.getAvatar().equals(user.getAvatar())) {
+            user.setAvatar(userDTO.getAvatar());
+        }
 
         return userRepository.save(user);
     }
 
-    public void deleteUser(Long id) {
+    public void deleteUser(Long id) throws IOException {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (user.getAvatar() != null) {
+            fileStorageService.deleteFile(user.getAvatar());
+        }
+
         userRepository.deleteById(id);
     }
     
     public Optional<User> authenticateUser(String usernameOrEmail, String password) {
-        // Tìm user theo username hoặc email
         Optional<User> userOptional = userRepository.findByUsername(usernameOrEmail);
         if (userOptional.isEmpty()) {
             userOptional = userRepository.findByEmail(usernameOrEmail);
         }
         
-        // Kiểm tra nếu user tồn tại và mật khẩu hợp lệ
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             if (passwordEncoder.matches(password, user.getPassword())) {

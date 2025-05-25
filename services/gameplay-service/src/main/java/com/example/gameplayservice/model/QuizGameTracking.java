@@ -25,9 +25,6 @@ public class QuizGameTracking {
 
     private Long userId;
 
-    @OneToMany(mappedBy = "quizGame", cascade = CascadeType.ALL)
-    private Set<Participant> participants = new HashSet<>();
-
     private Integer totalPoints;
 
     @Column(name = "`rank`")
@@ -37,6 +34,4 @@ public class QuizGameTracking {
 
     private Integer bestStreak;
 
-    @OneToMany(mappedBy = "quizGame", cascade = CascadeType.ALL)
-    private Set<QuestionTracking> questionTrackings = new HashSet<>();
 }

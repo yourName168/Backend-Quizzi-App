@@ -8,7 +8,5 @@ import lombok.experimental.SuperBuilder;
 @Data
 @SuperBuilder
 @NoArgsConstructor
-@AllArgsConstructor
 public class TypeTextOptionDTO extends OptionDTO {
-    private Boolean isCorrect;
 }
